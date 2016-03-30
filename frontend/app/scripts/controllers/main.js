@@ -1,17 +1,11 @@
 'use strict';
-
 /**
  * @ngdoc function
- * @name frontendApp.controller:MainCtrl
+ * @name sbAdminApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the frontendApp
+ * Controller of the sbAdminApp
  */
-angular.module('frontendApp')
-  .controller('MainCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+angular.module('sbAdminApp')
+  .controller('MainCtrl', function($scope,$position) {
   });
