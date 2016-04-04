@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gosti</title>
+    </head>
+
+    <body>
+        <h1>Dobro dosli</h1>
+            <ul>
+                {% for guest in guests %}
+                <li>{{ guest.first_name }}</li>
+                {% endfor %}
+            </ul>
+    </body>
+</html>

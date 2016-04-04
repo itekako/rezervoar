@@ -7,12 +7,12 @@ class Guest(models.Model):
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=15, unique=True)
-    email = models.EmailField(null=True, blank=True, unique=True)
+    email = models.EmailField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.first_name + self.last_name
+        return self.first_name + " " + self.last_name
 
 
 class Level(models.Model):
