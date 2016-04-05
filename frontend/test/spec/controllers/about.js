@@ -3,7 +3,7 @@
 describe('Controller: AboutCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('sbAdminApp'));
+  beforeEach(module('rezervoarApp'));
 
   var AboutCtrl,
     scope;
@@ -13,10 +13,11 @@ describe('Controller: AboutCtrl', function () {
     scope = $rootScope.$new();
     AboutCtrl = $controller('AboutCtrl', {
       $scope: scope
+      // place here mocked dependencies
     });
   }));
 
   it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+    expect(AboutCtrl.awesomeThings.length).toBe(3);
   });
 });

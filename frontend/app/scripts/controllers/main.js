@@ -1,11 +1,17 @@
 'use strict';
+
 /**
  * @ngdoc function
- * @name sbAdminApp.controller:MainCtrl
+ * @name rezervoarApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the sbAdminApp
+ * Controller of the rezervoarApp
  */
-angular.module('sbAdminApp')
-  .controller('MainCtrl', function($scope,$position) {
+angular.module('rezervoarApp')
+  .controller('MainCtrl', function () {
+    this.awesomeThings = [
+      'HTML5 Boilerplate',
+      'AngularJS',
+      'Karma'
+    ];
   });
