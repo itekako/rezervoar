@@ -64,6 +64,12 @@ module.exports = function (grunt) {
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
+      },
+      html: {
+          files: ['app/views/{,*/}*.html'],
+          options: {
+              livereload: true
+          }
       }
     },
 
@@ -220,7 +226,7 @@ module.exports = function (grunt) {
             }
           }
       }
-    }, 
+    },
 
     // Renames files for browser caching purposes
     filerev: {
