@@ -38,14 +38,14 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files: ['app/scripts/**/*.js'],
         tasks: ['newer:jshint:all', 'newer:jscs:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
       },
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
+        files: ['test/spec/**/*.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       styles: {
@@ -60,17 +60,14 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
+          'app/**/*.html',
+          '.tmp/styles/**/*.css',
+          'app/scripts/**/*.js',
+        //   '<%= yeoman.app %>/{,*/}*.html',
+        //   '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       },
-      html: {
-          files: ['app/views/{,*/}*.html'],
-          options: {
-              livereload: true
-          }
-      }
     },
 
     // The actual grunt server settings
@@ -347,6 +344,7 @@ module.exports = function (grunt) {
           module: 'rezervoarApp',
           htmlmin: '<%= htmlmin.dist.options %>',
           usemin: 'scripts/scripts.js'
+          //usemin: 'dist/scripts/scripts.js'
         },
         cwd: '<%= yeoman.app %>',
         src: 'views/{,*/}*.html',

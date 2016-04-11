@@ -9,6 +9,7 @@
  */
 angular.module('rezervoarApp')
   .controller('AboutCtrl', function () {
+      
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',

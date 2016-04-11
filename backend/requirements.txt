@@ -1,0 +1,14 @@
+Django==1.7
+Pillow==3.1.1
+argparse==1.2.1
+django-cors-headers==1.1.0
+djangorestframework==3.3.3
+pbr==1.8.1
+psycopg2==2.6.1
+six==1.10.0
+stevedore==1.12.0
+virtualenv==15.0.0
+virtualenv-clone==0.2.6
+virtualenvwrapper==4.7.1
+wheel==0.29.0
+wsgiref==0.1.2

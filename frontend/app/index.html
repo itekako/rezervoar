@@ -16,6 +16,7 @@
     <!-- endbuild -->
   </head>
   <body ng-app="rezervoarApp">
+  <div ng-view>
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -35,134 +36,7 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-2" style="background-color:#ff8080;">Ime restorana
-          </div>
-          <div class="col-md-1" style="background-color:#ccffb3;">Prizemlje
-          </div>
-          <div class="col-md-1" style="background-color:#99ccff;">Prvi sprat
-          </div>
-          <div class="col-md-8" style="background-color:#ffff99;">.col-sm-8
-          </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel-group" id="accordion">
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                  <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <p>
-                            21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                          <span class="text-right">REZERVISANO<span>
-                        </p>
-                      Pera Peric 22
-                    </h4>
-                  </div>
-                  <div id="collapse1" class="collapsed panel-collapse collapse">
-                    <div class="panel-body">
-                        <label>Telefon: </label> 0641234567
-                        <br/>
-                        <label>Email: </label> pera.peric@gmail.com
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                  <div class="panel-heading">
-                      <h4 class="panel-title">
-                          <p>
-                              21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                            <span class="text-right">REZERVISANO<span>
-                          </p>
-                        Pera Peric 22
-                      </h4>
-                  </div>
-                  <div id="collapse2" class="collapsed panel-collapse collapse">
-                      <div class="panel-body">
-                          <label>Telefon: </label> 0641234567
-                          <br/>
-                          <label>Email: </label> pera.peric@gmail.com
-                      </div>
-                  </div>
-                </div>
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-                  <div class="panel-heading">
-                      <h4 class="panel-title">
-                          <p>
-                              21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                            <span class="text-right">REZERVISANO<span>
-                          </p>
-                        Pera Peric 22
-                      </h4>
-                  </div>
-                  <div id="collapse3" class="collapsed panel-collapse collapse">
-                      <div class="panel-body">
-                          <label>Telefon: </label> 0641234567
-                          <br/>
-                          <label>Email: </label> pera.peric@gmail.com
-                      </div>
-                  </div>
-                </div>
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse4">
-                  <div class="panel-heading">
-                      <h4 class="panel-title">
-                          <p>
-                              21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                            <span class="text-right">REZERVISANO<span>
-                          </p>
-                        Pera Peric 22
-                      </h4>
-                  </div>
-                  <div id="collapse4" class="panel-collapse collapse">
-                      <div class="panel-body">
-                          <label>Telefon: </label> 0641234567
-                          <br/>
-                          <label>Email: </label> pera.peric@gmail.com
-                      </div>
-                  </div>
-                </div>
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse5">
-                  <div class="panel-heading">
-                      <h4 class="panel-title">
-                          <p>
-                              21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                            <span class="text-right">REZERVISANO<span>
-                          </p>
-                        Pera Peric 22
-                      </h4>
-                  </div>
-                  <div id="collapse5" class="panel-collapse collapse">
-                      <div class="panel-body">
-                          <label>Telefon: </label> 0641234567
-                          <br/>
-                          <label>Email: </label> pera.peric@gmail.com
-                      </div>
-                  </div>
-                </div>
-                <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse6">
-                  <div class="panel-heading">
-                      <h4 class="panel-title">
-                          <p>
-                              21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                            <span class="text-right">REZERVISANO<span>
-                          </p>
-                        Pera Peric 22
-                      </h4>
-                  </div>
-                  <div id="collapse6" class="panel-collapse collapse">
-                      <div class="panel-body">
-                          <label>Telefon: </label> 0641234567
-                          <br/>
-                          <label>Email: </label> pera.peric@gmail.com
-                      </div>
-                  </div>
-                </div>
-            </div>
-        </div>
-            <div class="col-md-8">
-                <div class="panel">
-                    <img src="images/skica.jpg" class="img-rounded" alt="Cinque Terre" width="750" height="500">
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <div class="footer">
@@ -201,6 +75,8 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/about.js"></script>
+        <script src="scripts/services/guestfactory.js"></script>
         <!-- endbuild -->
+</div>
 </body>
 </html>
