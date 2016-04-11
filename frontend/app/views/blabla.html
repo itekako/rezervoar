@@ -1,4 +1,3 @@
-<p>This is the BLABLA view.</p>
 <div class="row">
   <div class="col-md-2" style="background-color:#ff8080;">Ime restorana
   </div>
@@ -128,10 +127,11 @@
             <li>{{ guest.phone_number }}</li>
             <li>{{ guest.email }}</li>
         </ul>
-        <aside draggable="true" id="dragme">
-        </aside>
+        <div data-ng-repeat="tab in tables" style="float:left">
+            <aside draggable-table></aside>
+        </div>
         <div class="panel">
-            <img src="images/plan.png" class="img-rounded" alt="Cinque Terre" width="750" height="500">
+            <img src="images/plan.png" class="img-rounded" alt="Plan" width="750" height="500">
         </div>
     </div>
 </div>
