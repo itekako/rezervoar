@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nivoi</title>
+    </head>
+
+    <body>
+        <h1>Postoje sledeci nivoi:</h1>
+            <ul>
+                {% for level in levels %}
+                <li>{{ level.label  }}</li>
+		Scheme: <span>{{ level.scheme }} </span>
+                {% endfor %}
+            </ul>
+    </body>
+</html>

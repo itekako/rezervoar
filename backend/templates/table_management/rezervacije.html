@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rezervacije</title>
+    </head>
+
+    <body>
+        <h1>Postojece rezervacije:</h1>
+            <ul>
+                {% for reservation in reservations %}
+                <li>{{ reservation.id  }}</li>
+		<p>Start Date: <span>{{ reservation.start_date }} </span></p>
+		<p>End Date: <span>{{ reservation.end_date }} </span></p>
+		<p>Tables: <span>{{ reservation.tables }} </span></p>
+		<p>Number of guests: <span>{{ reservation.number_of_guests }} </span></p>
+                {% endfor %}
+            </ul>
+    </body>
+</html>

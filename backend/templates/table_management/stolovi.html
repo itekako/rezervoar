@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stolovi</title>
+    </head>
+
+    <body>
+        <h1>Postoje sledeci stolovi:</h1>
+            <ul>
+                {% for table in tables %}
+                <li>{{ table.label }}</li>
+                {% endfor %}
+            </ul>
+    </body>
+</html>
