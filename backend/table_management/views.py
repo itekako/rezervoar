@@ -53,6 +53,11 @@ class GuestDetail(APIView):
         guest = GuestSerializer(guest)
         return Response(guest.data)
 
+    def get(self, request, format=None):
+        guests = Guest.objects.all()
+        guests = GuestSerializer(guests, many=True)
+        return Response(guests.data)
+
 
 class TableDetail(APIView):
     def get_object(self, pk):
@@ -65,6 +70,14 @@ class TableDetail(APIView):
         table = self.get_object(pk)
         table = TableSerializer(table)
         return Response(table.data)
+
+    def get(self, request, level, format=None):
+        id_level = Level.objects.get(slug=level).id
+        print id_level
+        tables = Table.objects.filter(level=id_level)
+        print tables
+        tables = TableSerializer(tables, many=True)
+        return Response(tables.data)
 
 
 class LevelDetail(APIView):

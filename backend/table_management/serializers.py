@@ -3,6 +3,7 @@ from table_management.models import Guest, Table, Level, Reservation
 
 
 class GuestSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Guest
         fields = ('id', 'first_name', 'last_name', 'phone_number', 'email')
@@ -17,7 +18,7 @@ class TableSerializer(serializers.ModelSerializer):
 class LevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Level
-        fields = ('id', 'label', 'scheme')
+        fields = ('id', 'label', 'scheme', 'slug')
 
 
 class ReservationSerializer(serializers.ModelSerializer):
