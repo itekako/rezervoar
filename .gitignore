@@ -62,3 +62,7 @@ target/
 .ipynb_checkpoints
 
 *~
+
+bower_components/
+node_modules/
+.tmp/
