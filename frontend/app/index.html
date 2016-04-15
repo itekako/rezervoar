@@ -171,7 +171,10 @@
                 </ul>
                 <div data-ng-repeat="tab in tables" style="float:left">
                     <!-- <aside draggable-table tableLabel='{{tab.label}}' seats='{{tab.seats}}' taken='{{tab.taken}}'></aside> -->
-                    <aside draggable-table tableLabel='{{tab.label}}'></aside>
+                    <aside draggable-table ng-class="{'taken': tab.taken}">
+                        <span>{{tab.tableLabel}}</span><br/>
+                        <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
+                    </aside>
                 </div>
                 <div class="panel">
                     <img src="images/plan.png" class="img-rounded" alt="Plan" width="750" height="500">
@@ -182,7 +185,7 @@
 
     <div class="footer">
       <div class="container">
-        <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
+
       </div>
     </div>
 
@@ -219,6 +222,7 @@
         <script src="scripts/directives/draggabletable.js"></script>
         <script src="scripts/services/guestfactory.js"></script>
         <script src="scripts/services/tablefactory.js"></script>
+        <script src="scripts/services/reservationfactory.js"></script>
         <!-- endbuild -->
 </div>
 </body>

@@ -120,9 +120,16 @@ aside {
     position: absolute;;
     left: 0;
     top: 0;
-    width: 35px;
-    height: 35px;
-    background: rgba(206, 99, 6, 0.658824);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(24,175,6,1);
     border: 2px  solid rgba(0,0,0,0.5);
     border-radius: 4px; padding: 8px;
+    font-size: small;
+    color: white;
+    font-weight: bold;
+}
+
+.taken {
+    background-color: rgba(230,30,10,1);
 }

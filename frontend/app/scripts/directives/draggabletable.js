@@ -8,8 +8,8 @@ angular.module('rezervoarApp')
 
         element.css({
          position: 'relative',
-         border: '1px solid red',
-         backgroundColor: 'lightgrey',
+         border: '1px solid black',
+         //backgroundColor: 'lightgrey',
          cursor: 'pointer'
         });
 

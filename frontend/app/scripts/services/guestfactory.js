@@ -9,7 +9,7 @@ angular.module('rezervoarApp')
         };
 
         factory.getGuest = function(guestId) {
-            console.log('iz servisa:');
+            console.log('iz guest servisa:');
             return $http({
                 method: 'GET',
                 url: routes.get.replace(':id', guestId)
