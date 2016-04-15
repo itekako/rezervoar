@@ -8,10 +8,10 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-  .controller('MainCtrl', ['$scope', 'GuestFactory', function ($scope, GuestFactory) {
+  .controller('MainCtrl', ['$scope', 'GuestFactory', 'TableFactory', function ($scope, GuestFactory, TableFactory) {
 
     $scope.getGuest = function () {
-        GuestFactory.getGuest(1).then(function (response) {
+        GuestFactory.getGuest(4).then(function (response) {
             console.log('response: ', JSON.stringify(response));
             console.log('data: ', JSON.stringify(response.data));
             $scope.guest = response.data;
@@ -21,23 +21,20 @@ angular.module('rezervoarApp')
         });
     };
 
-    $scope.tables = [
-        {
-            label: 'tab1'
+    $scope.getTables = function () {
+        TableFactory.getTables('drugisprat').then(function (response) {
+            console.log('response: ', JSON.stringify(response));
+            console.log('data: ', JSON.stringify(response.data));
+            $scope.tables = response.data;
         },
-        {
-            label: 'tab2'
-        },
-        {
-            label: 'tab3'
-        },
-        {
-            label: 'tab4'
-        }
-    ];
+        function (response) {
+            console.log('response: ', JSON.stringify(response));
+        });
+    };
 
     $scope.initialize = function() {
         $scope.getGuest();
+        $scope.getTables();
     };
 
     $scope.initialize();

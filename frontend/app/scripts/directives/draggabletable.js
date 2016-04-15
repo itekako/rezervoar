@@ -35,6 +35,11 @@ angular.module('rezervoarApp')
           $document.off('mousemove', mousemove);
           $document.off('mouseup', mouseup);
         }
+      },
+      scope: {
+          tableLabel: '=tableLabel',
+          seats: '=seats',
+          taken: '=taken'
       }
     };
   }]);

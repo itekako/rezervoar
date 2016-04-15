@@ -128,7 +128,8 @@
             <li>{{ guest.email }}</li>
         </ul>
         <div data-ng-repeat="tab in tables" style="float:left">
-            <aside draggable-table></aside>
+            <!-- <aside draggable-table tableLabel='{{tab.label}}' seats='{{tab.seats}}' taken='{{tab.taken}}'></aside> -->
+            <aside draggable-table tableLabel='{{tab.label}}'></aside>
         </div>
         <div class="panel">
             <img src="images/plan.png" class="img-rounded" alt="Plan" width="750" height="500">

@@ -1,9 +1,43 @@
-.browsehappy {
+.navbar {
+    height: auto;
+    background: #000;
+    margin: 0;
+    height: 80px;
+}
+
+.navbar-nav li {
+    display: inline-block;
+    border-left: 1px solid #333;
+}
+.navbar-nav li:last-child {
+    border-right: 1px solid #333;
+}
+.navbar-nav li a {
+    border-top: 5px solid #000;
+    display: inline-block;
+    padding: 25px 20px 30px 20px;
+
+}
+.navbar-header {
+    height: 80px;
+}
+.navbar-header a {
+    padding: 10px 0;
+    display: block;
+    margin-left: 0 !important;
+    height: 80px;
+}
+.navbar-nav li.active a,
+.navbar-nav li a:hover {
+    border-color: #F3AF1E;
+}
+
+/*.browsehappy {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
-}
+}*/
 
 body {
   padding: 0;

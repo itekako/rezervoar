@@ -72,10 +72,8 @@ class TableDetail(APIView):
         return Response(table.data)
 
     def get(self, request, level, format=None):
-        id_level = Level.objects.get(slug=level).id
-        print id_level
+        id_level = Level.objects.get(label=level).id
         tables = Table.objects.filter(level=id_level)
-        print tables
         tables = TableSerializer(tables, many=True)
         return Response(tables.data)
 
