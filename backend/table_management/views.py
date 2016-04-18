@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import Http404
+from datetime import datetime
 
 from table_management.models import Guest, Table, Level, Reservation
-from table_management.serializers import GuestSerializer, TableSerializer, LevelSerializer, ReservationSerializer
+from table_management.serializers import GuestSerializer, TableSerializer,\
+    LevelSerializer, ReservationSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -41,7 +43,8 @@ def reservations(request):
     return render(request, "table_management/rezervacije.html", context_dict)
 
 
-class GuestDetail(APIView):
+# vraca gosta sa zadatim ID
+class GuestById(APIView):
     def get_object(self, pk):
         try:
             return Guest.objects.get(pk=pk)
@@ -53,13 +56,23 @@ class GuestDetail(APIView):
         guest = GuestSerializer(guest)
         return Response(guest.data)
 
+
+# vraca sve goste
+class Guests(APIView):
+    def get_object(self, pk):
+        try:
+            return Guest.objects.get(pk=pk)
+        except Guest.DoesNotExist:
+            raise Http404
+
     def get(self, request, format=None):
         guests = Guest.objects.all()
         guests = GuestSerializer(guests, many=True)
         return Response(guests.data)
 
 
-class TableDetail(APIView):
+# vraca sto sa zadatim ID
+class TableById(APIView):
     def get_object(self, pk):
         try:
             return Table.objects.get(pk=pk)
@@ -71,6 +84,15 @@ class TableDetail(APIView):
         table = TableSerializer(table)
         return Response(table.data)
 
+
+# vraca sve stolove na nivou sa zadatim Label
+class TablesPerLevel(APIView):
+    def get_object(self, pk):
+        try:
+            return Table.objects.get(pk=pk)
+        except Table.DoesNotExist:
+            raise Http404
+
     def get(self, request, level, format=None):
         id_level = Level.objects.get(label=level).id
         tables = Table.objects.filter(level=id_level)
@@ -78,7 +100,26 @@ class TableDetail(APIView):
         return Response(tables.data)
 
 
-class LevelDetail(APIView):
+# vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
+class TablesReserved(APIView):
+    def get_object(self, pk):
+        try:
+            return Table.objects.get(pk=pk)
+        except Table.DoesNotExist:
+            raise Http404
+
+    def get(self, request, sd, ed, label, format=None):
+        id_level = Level.objects.get(label=label).id
+        start_d = datetime.strptime(sd, "%d-%m-%Y-%H-%M")
+        end_d = datetime.strptime(ed, "%d-%m-%Y-%H-%M")
+        reservations = Reservation.objects.filter(start_date__lt=start_d)\
+            .filter(end_date__gt=end_d)
+        reservations = ReservationSerializer(reservations, many=True)
+        return Response(reservations.data)
+
+
+# vraca level sa zadatim ID
+class LevelById(APIView):
     def get_object(self, pk):
         try:
             return Level.objects.get(pk=pk)
@@ -91,7 +132,8 @@ class LevelDetail(APIView):
         return Response(level.data)
 
 
-class ReservationDetail(APIView):
+# vraca rezervaciju sa zadatim ID
+class ReservationById(APIView):
     def get_object(self, pk):
         try:
             return Reservation.objects.get(pk=pk)
