@@ -109,13 +109,25 @@ class TablesReserved(APIView):
             raise Http404
 
     def get(self, request, sd, ed, label, format=None):
-        id_level = Level.objects.get(label=label).id
         start_d = datetime.strptime(sd, "%d-%m-%Y-%H-%M")
         end_d = datetime.strptime(ed, "%d-%m-%Y-%H-%M")
         reservations = Reservation.objects.filter(start_date__lt=start_d)\
             .filter(end_date__gt=end_d)
-        reservations = ReservationSerializer(reservations, many=True)
-        return Response(reservations.data)
+        # za svaku rezervaciju koja ispunjava uslove prolazimo kroz stolove
+        # listOfTables je spisak svih zauzetih stolova
+        # reservedTables ce biti spisak svik zauzetih stolova, na tom spratu
+        reservedTables = set()
+        for reserve in reservations:
+            listOfTables = reserve.tables
+            # prolazimo kroz stolove i gledamo na kom su nivou
+            for tableLabel in listOfTables.split(","):
+                tableLabel = tableLabel.strip()  # uklanjamo beline
+                tableByLabel = Table.objects.get(label=tableLabel)
+                if str(tableByLabel.level) == str(label):
+                    reservedTables.add(tableByLabel.id)
+        reservedTables = Table.objects.filter(pk__in=reservedTables)
+        reservedTables = TableSerializer(reservedTables, many=True)
+        return Response(reservedTables.data)
 
 
 # vraca level sa zadatim ID
