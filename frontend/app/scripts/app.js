@@ -15,7 +15,9 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'rzModule',
+    'ui.bootstrap'
   ])
   .config(function ($routeProvider) {
     $routeProvider

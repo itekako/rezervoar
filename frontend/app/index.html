@@ -12,9 +12,10 @@
             padding-bottom: 20px;
         }
     </style>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="images/apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="images/apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css" />
 
         <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
         <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
@@ -49,24 +50,18 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-sm-8 text-center slider-wrapper">
-                    <p>
-                        <span class="holder">
-                            <span id="from" class="bubble"></span>
-                        </span>
-                        <span class="holder">
-                            <span id="to" class="bubble"></span>
-                        </span>
-                    </p>
-                    <div id="slider-range"></div>
+
+                        <rzslider rz-slider-model="slider.minValue"
+                            rz-slider-high="slider.maxValue"
+                            rz-slider-options="slider.options" class="slider">
+                        </rzslider>
                 </div>
             </div>
         </div>
         <div class="container">
             <div class="white-area">
 
-
                 <div class="row">
-
 
                     <div class="col-xs-12 col-sm-8 text-center">
                         <div class="panel">
@@ -194,10 +189,6 @@
                     </div>
                 </div>
 
-
-
-
-
                 <div data-ng-repeat="tab in tables" style="float:left">
                     <!-- <aside draggable-table tableLabel='{{tab.label}}' seats='{{tab.seats}}' taken='{{tab.taken}}'></aside> -->
                     <aside draggable-table ng-class="{'taken': tab.taken}">
@@ -205,7 +196,6 @@
                         <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
                     </aside>
                 </div>
-
 
             </div>
 
@@ -243,6 +233,8 @@
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angularjs-slider/dist/rzslider.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -254,6 +246,7 @@
         <script src="scripts/services/guestfactory.js"></script>
         <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/services/reservationfactory.js"></script>
+
         <!-- endbuild -->
 </div>
 </body>
