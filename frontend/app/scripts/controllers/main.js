@@ -31,8 +31,8 @@ angular.module('rezervoarApp')
     //     });
     // };
 
-    $scope.getReservations = function () {
-        $scope.tables = ReservationFactory.getReservations('nekidatum', 'nekovreme', 'nekisprat');
+    $scope.getReservations = function (resDate, startTime, endTime, level) {
+        $scope.tables = ReservationFactory.getReservations(resDate, startTime, endTime, level);
         for (var i in $scope.tables) {
             $scope.tables[i].taken = true;
         }
@@ -57,14 +57,29 @@ angular.module('rezervoarApp')
         '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
         '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
         '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30',
-        '23:00', '23:30']
+        '23:00', '23:30'],
+        noSwitching: true,
+        onChange: function () {
+            console.log("min: " + this.stepsArray[$scope.slider.minValue]);
+            console.log("max: " + this.stepsArray[$scope.slider.maxValue]);
+
+            var startTime = this.stepsArray[$scope.slider.minValue];
+            var endTime = this.stepsArray[$scope.slider.maxValue];
+
+            $scope.getReservations('nekidatum', startTime, endTime, 'nekisprat');
+        }
       }
     };
+    //
+    // $scope.onSliderChange = function () {
+    //     console.log("min: " + $scope.slider.minValue);
+    //     console.log("max: " + $scope.slider.maxValue);
+    // }
 
     $scope.initialize = function() {
         //$scope.getGuest();
         //$scope.getTables();
-        $scope.getReservations();
+        //$scope.getReservations();
     };
 
     $scope.initialize();
