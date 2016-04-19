@@ -9,6 +9,7 @@ from table_management.serializers import GuestSerializer, TableSerializer,\
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 import json
 
 
@@ -138,8 +139,10 @@ class TablesReserved(APIView):
         end_d = data.get('end_date')
         end_d = datetime.strptime(end_d, "%d-%m-%Y-%H-%M")
         level = str(data.get('level'))
-        reservations = Reservation.objects.filter(start_date__lt=start_d)\
-            .filter(end_date__gt=end_d)
+        reservations = Reservation.objects.filter(start_date__gte=start_d)\
+            .filter(start_date__lte=end_d) | Reservation.objects.filter(end_date__gte=start_d)\
+                .filter(end_date__lte=end_d) | Reservation.objects.filter(start_date__lte=start_d)\
+                    .filter(end_date__gte=end_d)
         result = {}
         result['tables'] = []
         for reserve in reservations:
