@@ -9,7 +9,6 @@ from table_management.serializers import GuestSerializer, TableSerializer,\
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
 import json
 
 
@@ -134,15 +133,20 @@ class TablesReserved(APIView):
 
     def post(self, request, format=None):
         data = request.data
-        start_d = data.get('start_date')
-        start_d = datetime.strptime(start_d, "%d-%m-%Y-%H-%M")
-        end_d = data.get('end_date')
-        end_d = datetime.strptime(end_d, "%d-%m-%Y-%H-%M")
+        date = data.get('date')
+        start_d = data.get('startTime')
+        end_d = data.get('endTime')
+        start_d = str(date) + " " + str(start_d)
+        end_d = str(date) + " " + str(end_d)
+        start_d = datetime.strptime(start_d, "%d.%m.%Y %H:%M")
+        end_d = datetime.strptime(end_d, "%d.%m.%Y %H:%M")
         level = str(data.get('level'))
         reservations = Reservation.objects.filter(start_date__gte=start_d)\
-            .filter(start_date__lte=end_d) | Reservation.objects.filter(end_date__gte=start_d)\
-                .filter(end_date__lte=end_d) | Reservation.objects.filter(start_date__lte=start_d)\
-                    .filter(end_date__gte=end_d)
+            .filter(start_date__lte=end_d) | \
+            Reservation.objects.filter(end_date__gte=start_d)\
+            .filter(end_date__lte=end_d) | \
+            Reservation.objects.filter(start_date__lte=start_d)\
+            .filter(end_date__gte=end_d)
         result = {}
         result['tables'] = []
         for reserve in reservations:
@@ -178,16 +182,16 @@ class TablesReserved(APIView):
         return Response(json.loads(json.dumps(result)), content_type="application/json")
 
 
-# vraca level sa zadatim ID
-class LevelById(APIView):
+# vraca level sa zadatim label
+class LevelByLabel(APIView):
     def get_object(self, pk):
         try:
             return Level.objects.get(pk=pk)
         except Level.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        level = self.get_object(pk)
+    def get(self, request, label, format=None):
+        level = Level.objects.get(label=label)
         level = LevelSerializer(level)
         return Response(level.data)
 
@@ -203,4 +207,18 @@ class ReservationById(APIView):
     def get(self, request, pk, format=None):
         reservation = self.get_object(pk)
         reservation = ReservationSerializer(reservation)
+        return Response(reservation.data)
+
+
+# vraca sve rezervacije
+class ReservationAll(APIView):
+    def get_object(self, pk):
+        try:
+            return Reservation.objects.get(pk=pk)
+        except Reservation.DoesNotExist:
+            raise Http404
+
+    def get(self, request, format=None):
+        reservation = Reservation.objects.all()
+        reservation = ReservationSerializer(reservation, many=True)
         return Response(reservation.data)
