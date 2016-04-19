@@ -9,6 +9,7 @@ from table_management.serializers import GuestSerializer, TableSerializer,\
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import json
 
 
 def index(request):
@@ -108,26 +109,70 @@ class TablesReserved(APIView):
         except Table.DoesNotExist:
             raise Http404
 
-    def get(self, request, sd, ed, label, format=None):
-        start_d = datetime.strptime(sd, "%d-%m-%Y-%H-%M")
-        end_d = datetime.strptime(ed, "%d-%m-%Y-%H-%M")
+    # def get(self, request, sd, ed, label, format=None):
+    #     start_d = datetime.strptime(sd, "%d-%m-%Y-%H-%M")
+    #     end_d = datetime.strptime(ed, "%d-%m-%Y-%H-%M")
+    #     reservations = Reservation.objects.filter(start_date__lt=start_d)\
+    #         .filter(end_date__gt=end_d)
+    #     # za svaku rezervaciju koja ispunjava uslove prolazimo kroz stolove
+    #     # listOfTables je spisak svih zauzetih stolova
+    #     # reservedTables ce biti spisak svik zauzetih stolova, na tom spratu
+    #     reservedTables = set()
+    #     for reserve in reservations:
+    #         listOfTables = reserve.tables
+    #         # prolazimo kroz stolove i gledamo na kom su nivou
+    #         for tableLabel in listOfTables.split(","):
+    #             tableLabel = tableLabel.strip()  # uklanjamo beline
+    #             tableByLabel = Table.objects.get(label=tableLabel)
+    #             if str(tableByLabel.level) == str(label):
+    #                 reservedTables.add(tableByLabel.id)
+    #     reservedTables = Table.objects.filter(pk__in=reservedTables)
+    #     reservedTables = TableSerializer(reservedTables, many=True)
+    #     print reservedTables.data
+    #     return Response(reservedTables.data)
+
+    def post(self, request, format=None):
+        data = request.data
+        start_d = data.get('start_date')
+        start_d = datetime.strptime(start_d, "%d-%m-%Y-%H-%M")
+        end_d = data.get('end_date')
+        end_d = datetime.strptime(end_d, "%d-%m-%Y-%H-%M")
+        level = str(data.get('level'))
         reservations = Reservation.objects.filter(start_date__lt=start_d)\
             .filter(end_date__gt=end_d)
-        # za svaku rezervaciju koja ispunjava uslove prolazimo kroz stolove
-        # listOfTables je spisak svih zauzetih stolova
-        # reservedTables ce biti spisak svik zauzetih stolova, na tom spratu
-        reservedTables = set()
+        result = {}
+        result['tables'] = []
         for reserve in reservations:
             listOfTables = reserve.tables
             # prolazimo kroz stolove i gledamo na kom su nivou
             for tableLabel in listOfTables.split(","):
                 tableLabel = tableLabel.strip()  # uklanjamo beline
                 tableByLabel = Table.objects.get(label=tableLabel)
-                if str(tableByLabel.level) == str(label):
-                    reservedTables.add(tableByLabel.id)
-        reservedTables = Table.objects.filter(pk__in=reservedTables)
-        reservedTables = TableSerializer(reservedTables, many=True)
-        return Response(reservedTables.data)
+                if str(tableByLabel.level) == str(level):
+                    insertData = {}
+                    insertData['id'] = tableByLabel.id
+                    insertData['label'] = tableByLabel.label
+                    insertData['start_date'] = reserve.start_date.strftime("%d-%m-%Y %H:%M")
+                    insertData['end_date'] = reserve.end_date.strftime("%d-%m-%Y %H:%M")
+                    insertData['comment'] = reserve.comment
+                    insertData['taken'] = True
+                    result['tables'].append(insertData)
+        id_level = Level.objects.get(label=level).id
+        allTables = Table.objects.all().filter(level=id_level)
+        lista = result['tables']
+        for table in allTables:
+            tmp = any(item for item in lista if str(item["label"]) == str(table.label))
+            if tmp is False:
+                insertData = {}
+                insertData['id'] = table.id
+                insertData['label'] = table.label
+                insertData['start_date'] = None
+                insertData['end_date'] = None
+                insertData['comment'] = None
+                insertData['taken'] = False
+                result['tables'].append(insertData)
+        print type(json.loads(json.dumps(result)))
+        return Response(json.loads(json.dumps(result)), content_type="application/json")
 
 
 # vraca level sa zadatim ID
