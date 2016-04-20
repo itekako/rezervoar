@@ -26,16 +26,6 @@ angular
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-    //   .when('/about', {
-    //     templateUrl: 'views/about.html',
-    //     controller: 'AboutCtrl',
-    //     controllerAs: 'about'
-    //   })
-    //   .when('/blabla', {
-    //     templateUrl: 'views/blabla.html',
-    //     controller: 'MainCtrl',
-    //     controllerAs: 'main'
-    //   })
       .otherwise({
         redirectTo: '/'
       });

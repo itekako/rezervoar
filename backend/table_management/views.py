@@ -169,7 +169,7 @@ class TablesReserved(APIView):
                         elif reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
                             tmp['taken'] = True
                         if reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
-                             tmp['taken'] = True 
+                             tmp['taken'] = True
                         tmp['takenList'].append(listElement)
         id_level = Level.objects.get(label=level).id
         allTables = Table.objects.all().filter(level=id_level)
