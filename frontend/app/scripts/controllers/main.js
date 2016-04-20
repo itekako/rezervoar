@@ -21,36 +21,26 @@ angular.module('rezervoarApp')
         });
     };
 
-    // $scope.getTables = function () {
-    //     TableFactory.getTables('drugisprat').then(function (response) {
-    //         console.log('iz getTables: data: ', JSON.stringify(response.data));
-    //         $scope.tables = response.data;
-    //     },
-    //     function (response) {
-    //         console.log('table error response: ', JSON.stringify(response));
-    //     });
-    // };
-
     $scope.getReservations = function (resDate, startTime, endTime, level) {
-        $scope.tables = ReservationFactory.getReservations(resDate, startTime, endTime, level);
-        for (var i in $scope.tables) {
-            $scope.tables[i].taken = true;
-        }
-        $scope.tables[$scope.tables.length-1].taken = false;
-        console.log('iz getReservations: $scope.tables: ', JSON.stringify($scope.tables));
-        // ReservationFactory.getReservations('nekidatum', 'nekovreme', 'nekisprat').then(function (response) {
-        //     console.log('iz getReservations: data: ', JSON.stringify(response.data));
-        //     $scope.tables = response.data;
-        // },
-        // function (response) {
-        //     console.log('reservation error response: ', JSON.stringify(response));
-        // });
+        ReservationFactory.getReservations(resDate, startTime, endTime, level).then(function (response) {
+            console.log('iz getReservations: data: ', JSON.stringify(response.data));
+            $scope.tables = response.data.tables;
+            },
+            function (response) {
+                console.log('reservation error response: ', JSON.stringify(response));
+        });
+        // var newElement = '<aside draggable-table id="{{tab.tableLabel}}" ng-class="{taken: tab.taken}"><span>{{tab.tableLabel}}</span><br/><span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span></aside>';
+        // var newDirective = angular.element(newElement);
+        // element.append(newDirective);
+        // $compile(newDirective)($scope);
+
     };
 
     $scope.slider = {
-      minValue: '02:00',
-      maxValue: '14:00',
+      minValue: 24,
+      maxValue: 28,
       options: {
+        // treba da stoji radno vreme restorana
         stepsArray: ['00:00', '00:30', '01:00', '01:30','02:00', '02:30',
         '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30',
         '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
@@ -59,28 +49,18 @@ angular.module('rezervoarApp')
         '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30',
         '23:00', '23:30'],
         noSwitching: true,
+        minRange: 1,
         onChange: function () {
-            console.log("min: " + this.stepsArray[$scope.slider.minValue]);
-            console.log("max: " + this.stepsArray[$scope.slider.maxValue]);
-
             var startTime = this.stepsArray[$scope.slider.minValue];
             var endTime = this.stepsArray[$scope.slider.maxValue];
 
-            $scope.getReservations('nekidatum', startTime, endTime, 'nekisprat');
+            $scope.getReservations('nekidatum', startTime, endTime, 'drugisprat');
         }
       }
     };
-    //
-    // $scope.onSliderChange = function () {
-    //     console.log("min: " + $scope.slider.minValue);
-    //     console.log("max: " + $scope.slider.maxValue);
-    // }
 
-    $scope.initialize = function() {
-        //$scope.getGuest();
-        //$scope.getTables();
-        //$scope.getReservations();
+    $scope.savePosition = function() {
+        var proba = angular.element('a2');
+        console.log("proba: ", JSON.stringify(proba.html()));
     };
-
-    $scope.initialize();
 }]);

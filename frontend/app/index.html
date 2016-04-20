@@ -190,13 +190,15 @@
                     </div>
                 </div>
 
-                <div data-ng-repeat="tab in tables" style="float:left">
-                    <!-- <aside draggable-table tableLabel='{{tab.label}}' seats='{{tab.seats}}' taken='{{tab.taken}}'></aside> -->
-                    <aside draggable-table ng-class="{'taken': tab.taken}">
-                        <span>{{tab.tableLabel}}</span><br/>
+                <!-- <div data-ng-repeat="tab in tables" style="float:left">>
+                </div> -->
+                <div data-ng-repeat="tab in tables | unique: 'label'" style="float:left">
+                    <aside draggable-table id="{{tab.label}}" ng-class="{'taken': tab.taken}">
+                        <span>{{tab.label}}</span><br/>
                         <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
                     </aside>
                 </div>
+                <!-- <button ng-click="savePosition()">Sacuvaj raspored</button> -->
 
             </div>
 
@@ -235,6 +237,7 @@
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angularjs-slider/dist/rzslider.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -246,6 +249,7 @@
         <script src="scripts/services/guestfactory.js"></script>
         <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/services/reservationfactory.js"></script>
+        <script src="scripts/unique.js"></script>
 
         <!-- endbuild -->
 </div>

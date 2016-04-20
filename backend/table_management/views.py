@@ -162,7 +162,7 @@ class TablesReserved(APIView):
                     insertData['endDate'] = reserve.end_date.strftime("%d.%m.%Y %H:%M")
                     insertData['comment'] = reserve.comment
                     insertData['capacity'] = tableByLabel.seats
-                    # insertData['taken'] = True
+                    insertData['taken'] = True
                     result['tables'].append(insertData)
         id_level = Level.objects.get(label=level).id
         allTables = Table.objects.all().filter(level=id_level)
@@ -176,7 +176,7 @@ class TablesReserved(APIView):
                 insertData['endDate'] = None
                 insertData['comment'] = None
                 insertData['capacity'] = table.seats
-                # insertData['taken'] = False
+                insertData['taken'] = False
                 result['tables'].append(insertData)
         print type(json.loads(json.dumps(result)))
         return Response(json.loads(json.dumps(result)), content_type="application/json")
