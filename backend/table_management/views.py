@@ -159,8 +159,8 @@ class TablesReserved(APIView):
                     insertData = {}
                     insertData['id'] = tableByLabel.id
                     insertData['label'] = tableByLabel.label
-                    insertData['start_date'] = reserve.start_date.strftime("%d-%m-%Y %H:%M")
-                    insertData['end_date'] = reserve.end_date.strftime("%d-%m-%Y %H:%M")
+                    insertData['startDate'] = reserve.start_date.strftime("%d.%m.%Y %H:%M")
+                    insertData['endDate'] = reserve.end_date.strftime("%d.%m.%Y %H:%M")
                     insertData['comment'] = reserve.comment
                     insertData['taken'] = True
                     result['tables'].append(insertData)
@@ -173,8 +173,8 @@ class TablesReserved(APIView):
                 insertData = {}
                 insertData['id'] = table.id
                 insertData['label'] = table.label
-                insertData['start_date'] = None
-                insertData['end_date'] = None
+                insertData['startDate'] = None
+                insertData['endDate'] = None
                 insertData['comment'] = None
                 insertData['taken'] = False
                 result['tables'].append(insertData)
