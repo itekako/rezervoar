@@ -124,12 +124,9 @@ class TablesReserved(APIView):
         end_d = datetime.strptime(end_d, "%d.%m.%Y %H:%M") + timedelta(minutes=30)
         end_d = end_d.replace(tzinfo=pytz.UTC)
         level = str(data.get('level'))
-        reservations = Reservation.objects.filter(start_date__gte=start_d)\
-            .filter(start_date__lte=end_d) | \
-            Reservation.objects.filter(end_date__gte=start_d)\
-            .filter(end_date__lte=end_d) | \
-            Reservation.objects.filter(start_date__lte=start_d)\
-            .filter(end_date__gte=end_d)
+        reservations = Reservation.objects.filter(start_date__gte=start_d).filter(start_date__lte=end_d) | \
+            Reservation.objects.filter(end_date__gte=start_d).filter(end_date__lte=end_d) | \
+            Reservation.objects.filter(start_date__lte=start_d).filter(end_date__gte=end_d)
         result = {}
         result['tables'] = []
         lista = result['tables']
@@ -151,11 +148,6 @@ class TablesReserved(APIView):
                         insertData['label'] = tableByLabel.label
                         insertData['comment'] = reserve.comment
                         insertData['seats'] = tableByLabel.seats
-                        print reserve.start_date
-                        print reserve.end_date
-                        print start_d + timedelta(minutes=30)
-                        print end_d - timedelta(minutes=30)
-                        print "---------------"
                         if reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
                             insertData['taken'] = True
                         elif reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
