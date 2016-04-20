@@ -157,12 +157,12 @@ class TablesReserved(APIView):
                 tableByLabel = Table.objects.get(label=tableLabel)
                 if str(tableByLabel.level) == str(level):
                     insertData = {}
-                    insertData['id'] = tableByLabel.id
                     insertData['label'] = tableByLabel.label
                     insertData['startDate'] = reserve.start_date.strftime("%d.%m.%Y %H:%M")
                     insertData['endDate'] = reserve.end_date.strftime("%d.%m.%Y %H:%M")
                     insertData['comment'] = reserve.comment
-                    insertData['taken'] = True
+                    insertData['capacity'] = tableByLabel.seats
+                    # insertData['taken'] = True
                     result['tables'].append(insertData)
         id_level = Level.objects.get(label=level).id
         allTables = Table.objects.all().filter(level=id_level)
@@ -171,12 +171,12 @@ class TablesReserved(APIView):
             tmp = any(item for item in lista if str(item["label"]) == str(table.label))
             if tmp is False:
                 insertData = {}
-                insertData['id'] = table.id
                 insertData['label'] = table.label
                 insertData['startDate'] = None
                 insertData['endDate'] = None
                 insertData['comment'] = None
-                insertData['taken'] = False
+                insertData['capacity'] = table.seats
+                # insertData['taken'] = False
                 result['tables'].append(insertData)
         print type(json.loads(json.dumps(result)))
         return Response(json.loads(json.dumps(result)), content_type="application/json")
