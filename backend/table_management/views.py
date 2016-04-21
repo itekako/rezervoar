@@ -104,6 +104,41 @@ class TablesPerLevel(APIView):
         return Response(tables.data)
 
 
+class AddReservation(APIView):
+    def get_object(self, pk):
+        try:
+            return Reservation.objects.get(pk=pk)
+        except Table.DoesNotExist:
+            raise Http404
+
+    def post(self, request, format=None):
+        data = request.data
+        start_d = datetime.strptime(data['startDate'], "%d.%m.%Y %H:%M")
+        start_d = start_d.replace(tzinfo=pytz.UTC)
+        # print "da li je ovo ok"
+        end_d = datetime.strptime(data['endDate'], "%d.%m.%Y %H:%M")
+        end_d = end_d.replace(tzinfo=pytz.UTC)
+        # print "ovo je ok"
+        newReservation = {}
+        newReservation['start_date'] = start_d
+        newReservation['end_date'] = end_d
+        newReservation['id_guest'] = data['guestId']
+        newReservation['tables'] = data['tables']
+        newReservation['number_of_guests'] = data['numberOfGuests']
+        newReservation['id_original'] = None
+        newReservation['id_user'] = int(data['userId'])
+        newReservation['comment'] = data['comment']
+        newReservation['valid'] = 1
+        newReservation['canceled'] = 0
+        newReservation = ReservationSerializer(data=newReservation)
+        if newReservation.is_valid() is False:
+            return Response(newReservation.errors)
+            print newReservation.errors
+        else:
+            newReservation.save()
+        return Response(request.data)
+
+
 # vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
 class TablesReserved(APIView):
     def get_object(self, pk):
@@ -151,17 +186,19 @@ class TablesReserved(APIView):
                         if reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
                             insertData['taken'] = True
                         elif reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
-                             insertData['taken'] = True
+                            insertData['taken'] = True
                         else:
-                             insertData['taken'] = False
+                            insertData['taken'] = False
+                        print insertData
                         result['tables'].append(insertData)
                     else:
                         if tmp['taken'] is True:
+                            tmp['takenList'].append(listElement)
                             continue
                         elif reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
                             tmp['taken'] = True
                         if reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
-                             tmp['taken'] = True
+                            tmp['taken'] = True
                         tmp['takenList'].append(listElement)
         id_level = Level.objects.get(label=level).id
         allTables = Table.objects.all().filter(level=id_level)
@@ -175,6 +212,9 @@ class TablesReserved(APIView):
                 insertData['seats'] = table.seats
                 insertData['taken'] = False
                 result['tables'].append(insertData)
+        for item in result['tables']:
+            # print item['takenList']
+            item['takenList'] = sorted(item['takenList'], key=lambda k: k['startDate'])
         return Response(json.loads(json.dumps(result)), content_type="application/json")
 
 
