@@ -4,6 +4,8 @@ from table_management import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
+    # USER
+    url(r'^api/user-by-username/(?P<username>[a-zA-z0-9\s_-]+)$', views.UserByUsername.as_view()),
     # GOSTI
     url(r'^api/guests/$', views.Guests.as_view()),
     url(r'^api/guest/(?P<pk>[0-9]+)/$', views.GuestById.as_view()),

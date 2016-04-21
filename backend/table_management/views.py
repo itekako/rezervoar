@@ -4,10 +4,12 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import tzinfo
 import pytz
+from django.core import serializers
+from django.contrib.auth.models import User
 
 from table_management.models import Guest, Table, Level, Reservation
 from table_management.serializers import GuestSerializer, TableSerializer,\
-    LevelSerializer, ReservationSerializer
+    LevelSerializer, ReservationSerializer, UserSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -104,6 +106,15 @@ class TablesPerLevel(APIView):
         return Response(tables.data)
 
 
+# vraca user-a (konobara) koji ima trazeni username
+class UserByUsername(APIView):
+    def get(self, request, username, format=None):
+        user = User.objects.filter(username=username)
+        user = user[0]
+        user = UserSerializer(user)
+        return Response(user.data)
+
+
 class AddReservation(APIView):
     def get_object(self, pk):
         try:
@@ -115,14 +126,34 @@ class AddReservation(APIView):
         data = request.data
         start_d = datetime.strptime(data['startDate'], "%d.%m.%Y %H:%M")
         start_d = start_d.replace(tzinfo=pytz.UTC)
-        # print "da li je ovo ok"
         end_d = datetime.strptime(data['endDate'], "%d.%m.%Y %H:%M")
         end_d = end_d.replace(tzinfo=pytz.UTC)
-        # print "ovo je ok"
+        # proveravamo da li vec posotji taj gost u bazi
+        # ako ne postoji dodajemo ga
+        firstName = data.get('firstName')
+        lastName = data['lastName']
+        phoneNumber = data['phoneNumber']
+        guest = Guest.objects.filter(first_name=firstName).filter(last_name=lastName).filter(phone_number=phoneNumber)
+        if not guest:
+            print "if not guest"
+            newGuest = {}
+            newGuest['first_name'] = firstName
+            newGuest['last_name'] = lastName
+            newGuest['phone_number'] = phoneNumber
+            newGuest = GuestSerializer(data=newGuest)
+            if newGuest.is_valid() is False:
+                return Response(newGuest.errors)
+            else:
+                print "sacuvam ga:"
+                print newGuest
+                guest = newGuest.save()
+        else:
+            guest = guest[0]
+        # dodajemo novu rezervaciju
         newReservation = {}
         newReservation['start_date'] = start_d
         newReservation['end_date'] = end_d
-        newReservation['id_guest'] = data['guestId']
+        newReservation['id_guest'] = guest.id
         newReservation['tables'] = data['tables']
         newReservation['number_of_guests'] = data['numberOfGuests']
         newReservation['id_original'] = None
