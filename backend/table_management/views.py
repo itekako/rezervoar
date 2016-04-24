@@ -115,19 +115,21 @@ class UserByUsername(APIView):
         return Response(user.data)
 
 
+# dodaje novu rezervaciju u bazu
 class AddReservation(APIView):
-    def get_object(self, pk):
-        try:
-            return Reservation.objects.get(pk=pk)
-        except Table.DoesNotExist:
-            raise Http404
-
     def post(self, request, format=None):
         data = request.data
-        start_d = datetime.strptime(data['startDate'], "%d.%m.%Y %H:%M")
+        start_d = str(data.get('date')) + " " + str(data.get('startTime'))
+        end_d = str(data.get('date')) + " " + str(data.get('endTime'))
+        # iz string u datetime
+        start_d = datetime.strptime(start_d, "%d.%m.%Y %H:%M")
+        end_d = datetime.strptime(end_d, "%d.%m.%Y %H:%M")
+        # dodajemo casovnu zonu
         start_d = start_d.replace(tzinfo=pytz.UTC)
-        end_d = datetime.strptime(data['endDate'], "%d.%m.%Y %H:%M")
         end_d = end_d.replace(tzinfo=pytz.UTC)
+        # ukoliko je endDate nakon ponoci dodajemo mu 1 dan
+        if start_d.time() > end_d.time():
+            end_d = end_d + timedelta(days=1)
         # proveravamo da li vec posotji taj gost u bazi
         # ako ne postoji dodajemo ga
         firstName = data.get('firstName')
@@ -135,7 +137,7 @@ class AddReservation(APIView):
         phoneNumber = data['phoneNumber']
         guest = Guest.objects.filter(first_name=firstName).filter(last_name=lastName).filter(phone_number=phoneNumber)
         if not guest:
-            print "if not guest"
+            # ne postoji, moramo da ga dodamo
             newGuest = {}
             newGuest['first_name'] = firstName
             newGuest['last_name'] = lastName
@@ -145,10 +147,20 @@ class AddReservation(APIView):
                 return Response(newGuest.errors)
             else:
                 print "sacuvam ga:"
-                print newGuest
                 guest = newGuest.save()
         else:
+            # postoji vec takav gost
             guest = guest[0]
+        # proveravamo da li postoji takav user u bazi
+        username = data.get('username')
+        user = User.objects.filter(username=username)
+        print user
+        if not user:
+            answer = {'error': 'User with that username not found'}
+            print answer
+            return Response(answer)
+        else:
+            user = user[0]
         # dodajemo novu rezervaciju
         newReservation = {}
         newReservation['start_date'] = start_d
@@ -157,7 +169,7 @@ class AddReservation(APIView):
         newReservation['tables'] = data['tables']
         newReservation['number_of_guests'] = data['numberOfGuests']
         newReservation['id_original'] = None
-        newReservation['id_user'] = int(data['userId'])
+        newReservation['id_user'] = user.id
         newReservation['comment'] = data['comment']
         newReservation['valid'] = 1
         newReservation['canceled'] = 0
@@ -170,70 +182,152 @@ class AddReservation(APIView):
         return Response(request.data)
 
 
-# vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
-class TablesReserved(APIView):
-    def get_object(self, pk):
-        try:
-            return Table.objects.get(pk=pk)
-        except Table.DoesNotExist:
-            raise Http404
-
+# menja vec postojecu rezervaciju
+class UpdateReservation(APIView):
     def post(self, request, format=None):
         data = request.data
-        date = data.get('date')
-        start_d = data.get('startTime')
-        end_d = data.get('endTime')
-        start_d = str(date) + " " + str(start_d)
-        end_d = str(date) + " " + str(end_d)
-        start_d = datetime.strptime(start_d, "%d.%m.%Y %H:%M") - timedelta(minutes=30)
+        # nalazimo originalnu rezervaciju
+        idOriginal = int(data.get('idOriginal'))
+        originalReservation = Reservation.objects.get(pk=idOriginal)
+        newReservation = {}
+        newReservation['id_original'] = idOriginal
+        newReservation['id_guest'] = originalReservation.id_guest.id
+        if (data.get('startDate') != ''):
+            start_d = datetime.strptime(data.get('startDate'), "%d.%m.%Y %H:%M")
+            start_d = start_d.replace(tzinfo=pytz.UTC)
+            newReservation['start_date'] = start_d
+        else:
+            newReservation['start_date'] = originalReservation.start_date
+        if (data.get('endDate') != ''):
+            end_d = datetime.strptime(data.get('endDate'), "%d.%m.%Y %H:%M")
+            end_d = end_d.replace(tzinfo=pytz.UTC)
+            newReservation['end_date'] = end_d
+        else:
+            newReservation['end_date'] = originalReservation.end_date
+        if (data.get('tables') != ''):
+            newReservation['tables'] = data.get('tables')
+        else:
+            newReservation['tables'] = originalReservation.tables
+        if (data.get('numberOfGuests') != ''):
+            newReservation['number_of_guests'] = data.get('numberOfGuests')
+        else:
+            newReservation['number_of_guests'] = originalReservation.number_of_guests
+        # proveravamo da li postoji user koij menja rezervaciju u bazi
+        username = data.get('username')
+        user = User.objects.filter(username=username)
+        if not user:
+            answer = {'error': 'User with that username not found'}
+            print answer
+            return Response(answer)
+        else:
+            user = user[0]
+        newReservation['id_user'] = user.id
+        if (data.get('comment') != ''):
+            newReservation['comment'] = data.get('comment')
+        else:
+            newReservation['comment'] = originalReservation.comment
+        newReservation['valid'] = 1
+        newReservation['canceled'] = 0
+        # dodajemo novu rezervaciju
+        newReservation = ReservationSerializer(data=newReservation)
+        if newReservation.is_valid() is False:
+            return Response(newReservation.errors)
+            print newReservation.errors
+        else:
+            newReservation.save()
+        # staroj menjamo VALID
+        updatedOriginal = originalReservation.__dict__
+        updatedOriginal['valid'] = 0
+        updatedOriginal['id_user'] = originalReservation.id_user.id
+        updatedOriginal['id_guest'] = originalReservation.id_guest.id
+        updatedOriginal = ReservationSerializer(originalReservation, data=updatedOriginal)
+        if updatedOriginal.is_valid() is False:
+            return Response(updatedOriginal.errors)
+            print updatedOriginal.errors
+        else:
+            updatedOriginal.save()
+        return Response(request.data)
+
+
+# vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
+class TablesReserved(APIView):
+    def post(self, request, format=None):
+        data = request.data
+        start_d = str(data.get('date')) + " " + str(data.get('startTime'))
+        end_d = str(data.get('date')) + " " + str(data.get('endTime'))
+        # iz string u datetime
+        start_d = datetime.strptime(start_d, "%d.%m.%Y %H:%M")
+        end_d = datetime.strptime(end_d, "%d.%m.%Y %H:%M")
+        # dodajemo casovnu zonu
         start_d = start_d.replace(tzinfo=pytz.UTC)
-        end_d = datetime.strptime(end_d, "%d.%m.%Y %H:%M") + timedelta(minutes=30)
         end_d = end_d.replace(tzinfo=pytz.UTC)
+        # ukoliko je endDate nakon ponoci dodajemo mu 1 dan
+        if start_d.time() > end_d.time():
+            end_d = end_d + timedelta(days=1)
+        # pamtimo vremena pre dodavanja pola sata
+        startOriginal = start_d
+        endOriginal = end_d
+        # gledamo pola sata ranije, i pola sata kasnije
+        start_d -= timedelta(minutes=30)
+        end_d += timedelta(minutes=30)
+        # sprat na kom hocemo rezervacije
         level = str(data.get('level'))
+        # sve rezervacije koje odgovaraju datom vremenu
         reservations = Reservation.objects.filter(start_date__gte=start_d).filter(start_date__lte=end_d) | \
             Reservation.objects.filter(end_date__gte=start_d).filter(end_date__lte=end_d) | \
             Reservation.objects.filter(start_date__lte=start_d).filter(end_date__gte=end_d)
         result = {}
         result['tables'] = []
         lista = result['tables']
-        for reserve in reservations:
-            listOfTables = reserve.tables
-            # prolazimo kroz stolove i gledamo na kom su nivou
+        # prolazimo kroz sve dobijene rezervacije
+        for reservation in reservations:
+            # ako rezervacija nije validna, ili je otkazana preskacemo je
+            if (reservation.valid == 0 or reservation.canceled == 1):
+                continue
+            listOfTables = reservation.tables
+            # prolazimo kroz listu stolova rezervacije
             for tableLabel in listOfTables.split(","):
                 tableLabel = tableLabel.strip()  # uklanjamo beline
                 tableByLabel = Table.objects.get(label=tableLabel)
+                # da li se sto nalazi na trazenom spratu
                 if str(tableByLabel.level) == str(level):
                     listElement = {}
-                    listElement['startDate'] = reserve.start_date.strftime("%d.%m.%Y %H:%M")
-                    listElement['endDate'] = reserve.end_date.strftime("%d.%m.%Y %H:%M")
+                    listElement['startDate'] = reservation.start_date.strftime("%d.%m.%Y %H:%M")
+                    listElement['endDate'] = reservation.end_date.strftime("%d.%m.%Y %H:%M")
                     tmp = next((item for item in lista if str(item["label"]) == str(tableLabel)), None)
+                    # da li se sto vec nalazi u listi
                     if tmp is None:
                         insertData = {}
                         insertData['takenList'] = []
                         insertData['takenList'].append(listElement)
                         insertData['label'] = tableByLabel.label
-                        insertData['comment'] = reserve.comment
+                        insertData['comment'] = reservation.comment
                         insertData['seats'] = tableByLabel.seats
-                        if reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
+                        # pupunjavamo 'taken' polje u odnosu na to da li je sto zauzet tokom trazenog vremena
+                        # ili samo pola sata ranije ili kasnije
+                        if reservation.start_date >= startOriginal and reservation.start_date < endOriginal:
                             insertData['taken'] = True
-                        elif reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
+                        elif reservation.end_date > startOriginal and reservation.end_date <= endOriginal:
                             insertData['taken'] = True
                         else:
                             insertData['taken'] = False
                         print insertData
                         result['tables'].append(insertData)
+                    # ukoliko se vec nalazi, samo dodajemo u takenList
                     else:
                         if tmp['taken'] is True:
                             tmp['takenList'].append(listElement)
                             continue
-                        elif reserve.start_date >= start_d + timedelta(minutes=30) and reserve.start_date < end_d - timedelta(minutes=30):
+                        elif reservation.start_date >= startOriginal and reservation.start_date < endOriginal:
                             tmp['taken'] = True
-                        if reserve.end_date > start_d + timedelta(minutes=30) and reserve.end_date <= end_d - timedelta(minutes=30):
+                        if reservation.end_date > startOriginal and reservation.end_date <= endOriginal:
                             tmp['taken'] = True
                         tmp['takenList'].append(listElement)
+        # postoje li na tom spratu stolovi koji nisu rezervisani, njih oznacavamo kao slobodne
         id_level = Level.objects.get(label=level).id
         allTables = Table.objects.all().filter(level=id_level)
         for table in allTables:
+            # da li je vec rezervisan taj sto
             tmp = any(item for item in lista if str(item["label"]) == str(table.label))
             if tmp is False:
                 insertData = {}
@@ -243,8 +337,8 @@ class TablesReserved(APIView):
                 insertData['seats'] = table.seats
                 insertData['taken'] = False
                 result['tables'].append(insertData)
+        # sortiramo listu zauzeca stola po vremenu
         for item in result['tables']:
-            # print item['takenList']
             item['takenList'] = sorted(item['takenList'], key=lambda k: k['startDate'])
         return Response(json.loads(json.dumps(result)), content_type="application/json")
 

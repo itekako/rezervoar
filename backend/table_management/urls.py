@@ -21,5 +21,6 @@ urlpatterns = patterns(
     # REZERVACIJE
     url(r'^api/reservations/$', views.ReservationAll.as_view()),
     url(r'^api/add-reservation/$', views.AddReservation.as_view()),
+    url(r'^api/update-reservation/$', views.UpdateReservation.as_view()),
     url(r'^api/reservation/(?P<pk>[0-9]+)/$', views.ReservationById.as_view()),
     )
