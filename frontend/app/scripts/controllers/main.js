@@ -25,15 +25,11 @@ angular.module('rezervoarApp')
         ReservationFactory.getReservations(resDate, startTime, endTime, level).then(function (response) {
             console.log('iz getReservations: data: ', JSON.stringify(response.data));
             $scope.tables = response.data.tables;
-            },
-            function (response) {
-                console.log('reservation error response: ', JSON.stringify(response));
+            console.log("iz getReservations: tables: ", JSON.stringify($scope.tables));
+        },
+        function (response) {
+            console.log('reservation error response: ', JSON.stringify(response));
         });
-        // var newElement = '<aside draggable-table id="{{tab.tableLabel}}" ng-class="{taken: tab.taken}"><span>{{tab.tableLabel}}</span><br/><span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span></aside>';
-        // var newDirective = angular.element(newElement);
-        // element.append(newDirective);
-        // $compile(newDirective)($scope);
-
     };
 
     $scope.slider = {
@@ -51,10 +47,10 @@ angular.module('rezervoarApp')
         noSwitching: true,
         minRange: 1,
         onChange: function () {
-            var startTime = this.stepsArray[$scope.slider.minValue];
-            var endTime = this.stepsArray[$scope.slider.maxValue];
+            $scope.startTime = this.stepsArray[$scope.slider.minValue];
+            $scope.endTime = this.stepsArray[$scope.slider.maxValue];
 
-            $scope.getReservations('nekidatum', startTime, endTime, 'drugisprat');
+            $scope.getReservations('nekidatum', $scope.startTime, $scope.endTime, 'drugisprat');
         }
       }
     };
@@ -63,4 +59,12 @@ angular.module('rezervoarApp')
         var proba = angular.element('a2');
         console.log("proba: ", JSON.stringify(proba.html()));
     };
+
+    $scope.initialize = function() {
+        $scope.startTime = $scope.slider.options.stepsArray[$scope.slider.minValue];
+        $scope.endTime = $scope.slider.options.stepsArray[$scope.slider.maxValue];
+        $scope.getReservations('nekidatum', $scope.startTime, $scope.endTime, 'drugisprat');
+    };
+
+    $scope.initialize();
 }]);

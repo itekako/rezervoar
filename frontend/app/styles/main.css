@@ -81,3 +81,17 @@ aside {
 /*.slider p {
     margin-top: 10px;
 }*/
+.time-line {
+    position: absolute;
+    bottom:8px;
+    left:0px;
+    background-color: #18AF06;
+    height: 7px;
+    width: 50px;
+    display: block;
+}
+.time-line-span {
+    position: absolute;
+    background-color: #E61E0A;
+    height: 7px;
+}
