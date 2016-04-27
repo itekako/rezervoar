@@ -1,45 +1,22 @@
 'use strict';
-
 angular.module('rezervoarApp')
-    .directive('draggableTable', ['$document', function($document) {
-    return {
-      link: function(scope, element, attr) {
-        var startX = 0, startY = 0, x = 0, y = 0;
+    .directive('draggableTable', function() {
+        return {
+            restrict: 'A',
+            scope: {
+                callback: '&onResize'
+            },
+            link: function postLink(scope, elem, attrs) {
+                elem.resizable({handles: "n, e, s, w, ne, se, sw, nw"});
+                elem.draggable({containment: "#drag-area"});
 
-        element.css({
-         position: 'relative',
-         border: '1px solid black',
-         //backgroundColor: 'lightgrey',
-         cursor: 'pointer'
-        });
-
-        element.on('mousedown', function(event) {
-          // Prevent default dragging of selected content
-          event.preventDefault();
-          startX = event.pageX - x;
-          startY = event.pageY - y;
-          $document.on('mousemove', mousemove);
-          $document.on('mouseup', mouseup);
-        });
-
-        function mousemove(event) {
-          y = event.pageY - startY;
-          x = event.pageX - startX;
-          element.css({
-            top: y + 'px',
-            left:  x + 'px'
-          });
-        }
-
-        function mouseup() {
-          $document.off('mousemove', mousemove);
-          $document.off('mouseup', mouseup);
-        }
-      },
-      scope: {
-          tableLabel: '=tableLabel',
-          seats: '=seats',
-          taken: '=taken'
-      }
-    };
-  }]);
+                elem.on('resize', function (evt, ui) {
+                    scope.$apply(function() {
+                        if (scope.callback) {
+                            scope.callback({$evt: evt, $ui: ui });
+                        }
+                    });
+                });
+            }
+        };
+    });

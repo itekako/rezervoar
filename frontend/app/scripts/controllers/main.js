@@ -8,8 +8,8 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-  .controller('MainCtrl', ['$scope', 'GuestFactory', 'TableFactory',
-    'ReservationFactory', function ($scope, GuestFactory, TableFactory, ReservationFactory) {
+  .controller('MainCtrl', ['$scope', '$rootScope', 'GuestFactory', 'TableFactory',
+    'ReservationFactory', function ($scope, $rootScope, GuestFactory, TableFactory, ReservationFactory) {
 
     $scope.getGuest = function () {
         GuestFactory.getGuest(4).then(function (response) {
@@ -55,9 +55,8 @@ angular.module('rezervoarApp')
       }
     };
 
-    $scope.savePosition = function() {
-        var proba = angular.element('a2');
-        console.log("proba: ", JSON.stringify(proba.html()));
+    $scope.scaleIntervals = function (evt, ui) {
+        $rootScope.$broadcast('scaleIntervals', {id: ui.element[0].id, width: ui.size.width});
     };
 
     $scope.initialize = function() {
@@ -67,4 +66,5 @@ angular.module('rezervoarApp')
     };
 
     $scope.initialize();
+
 }]);

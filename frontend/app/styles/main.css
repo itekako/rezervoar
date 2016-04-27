@@ -54,7 +54,7 @@
     display: inline-block;
 }*/
 aside {
-    position: absolute;;
+    position: absolute;
     left: 0;
     top: 0;
     width: 50px;
@@ -82,8 +82,11 @@ aside {
     margin-top: 10px;
 }*/
 .time-line {
-    position: absolute;
+    /*position: absolute;
     bottom:8px;
+    left:0px;*/
+    position: relative;;
+    bottom:12px;
     left:0px;
     background-color: #18AF06;
     height: 7px;

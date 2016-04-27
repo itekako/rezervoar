@@ -5,7 +5,6 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <style>
         body {
             padding-top: 50px;
@@ -14,11 +13,12 @@
     </style>
     <link rel="stylesheet" href="styles/main.css" />
     <link rel="images/apple-touch-icon" href="apple-touch-icon.png" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css" />
 
-        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
-        <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css">
+
   </head>
   <body ng-app="rezervoarApp" ng-controller='MainCtrl'>
   <!-- <div ng-view> -->
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container"  id="#drag-area">
             <div class="white-area">
 
                 <div class="row">
@@ -190,14 +190,17 @@
                     </div>
                 </div>
 
-                <div data-ng-repeat="tab in tables | unique: 'label'" draggable-table style="float:left;">
-                    <time-line start-time="startTime" end-time="endTime" taken-intervals="tab.takenList"></time-line>
-                    <aside id="{{tab.label}}" ng-class="{'taken': tab.taken}">
-                        <span>{{tab.label}}</span><br/>
-                        <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
-                    </aside>
+                <div data-ng-repeat="tab in tables | unique: 'label'">
+                    <div id="{{tab.label}}-div" draggable-table style="position:absolute;left:200px;top:200px;width:50px;height:73px;" on-resize="scaleIntervals($evt, $ui)">
+                        <time-line id="{{tab.label}}-timeline" start-time="startTime" end-time="endTime" taken-intervals="tab.takenList" style="width:100%;"></time-line>
+                        <aside id="{{tab.label}}" ng-class="{'taken': tab.taken}" style="width:100%;height:100%;">
+                            <span>{{tab.label}}</span><br/>
+                            <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
+                        </aside>
+                    </div>
                 </div>
-                <!-- <button ng-click="savePosition()">Sacuvaj raspored</button> -->
+
+            </div>
 
             </div>
 
@@ -224,6 +227,9 @@
        ga('send', 'pageview');
     </script>
 
+
+
+
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -240,10 +246,11 @@
     <!-- endbower -->
     <!-- endbuild -->
 
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/about.js"></script>
         <script src="scripts/directives/draggabletable.js"></script>
         <script src="scripts/directives/timeline.js"></script>
         <script src="scripts/services/guestfactory.js"></script>
@@ -252,6 +259,7 @@
         <script src="scripts/unique.js"></script>
 
         <!-- endbuild -->
+
 </div>
 </body>
 </html>
