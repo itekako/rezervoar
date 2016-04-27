@@ -5,6 +5,15 @@ from datetime import datetime
 from django.template.defaultfilters import slugify
 
 
+class Restorant(models.Model):
+    title = models.CharField(max_length=128, blank=False)
+    opening_time = models.TimeField(blank=False)
+    closing_time = models.TimeField(blank=False)
+
+    def __unicode__(self):
+        return self.title
+
+
 class Guest(models.Model):
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
