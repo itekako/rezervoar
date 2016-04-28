@@ -59,9 +59,9 @@
                 </div>
             </div>
         </div>
-        <div class="container"  id="#drag-area">
-            <div class="white-area">
-
+        <div class="container">
+            <button class="save-button" data-ng-click="saveLayout()">Save layout</button>
+            <div id="#drag-area" class="white-area">
                 <div class="row">
 
                     <div class="col-xs-12 col-sm-8 text-center">
@@ -191,7 +191,8 @@
                 </div>
 
                 <div data-ng-repeat="tab in tables | unique: 'label'">
-                    <div id="{{tab.label}}-div" draggable-table style="position:absolute;left:200px;top:200px;width:50px;height:73px;" on-resize="scaleIntervals($evt, $ui)">
+                    <div id="{{tab.label}}-div" draggable-table on-resize="scaleIntervals($evt, $ui)" on-dragstop="savePosition($evt, $ui)"
+                        class="draggable-table" style="position:absolute;left:{{tab.position.left}}px;top:{{tab.position.top}}px;">
                         <time-line id="{{tab.label}}-timeline" start-time="startTime" end-time="endTime" taken-intervals="tab.takenList" style="width:100%;"></time-line>
                         <aside id="{{tab.label}}" ng-class="{'taken': tab.taken}" style="width:100%;height:100%;">
                             <span>{{tab.label}}</span><br/>

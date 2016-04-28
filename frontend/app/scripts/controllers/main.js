@@ -25,6 +25,15 @@ angular.module('rezervoarApp')
         ReservationFactory.getReservations(resDate, startTime, endTime, level).then(function (response) {
             console.log('iz getReservations: data: ', JSON.stringify(response.data));
             $scope.tables = response.data.tables;
+
+            var bla = 200;
+            for (var i in $scope.tables) {
+                $scope.tables[i].position = {};
+                $scope.tables[i].position.top = bla;
+                $scope.tables[i].position.left = bla;
+                bla = bla + 50;
+            }
+
             console.log("iz getReservations: tables: ", JSON.stringify($scope.tables));
         },
         function (response) {
@@ -56,7 +65,37 @@ angular.module('rezervoarApp')
     };
 
     $scope.scaleIntervals = function (evt, ui) {
-        $rootScope.$broadcast('scaleIntervals', {id: ui.element[0].id, width: ui.size.width});
+        $rootScope.$broadcast('scaleIntervals', {
+            id: ui.element[0].id,
+            width: ui.size.width
+        });
+    };
+
+    $scope.savePosition = function(evt, ui) {
+        console.log("evt 1", evt);
+        console.log("ui 1", ui.helper[0].id);
+        console.log("dogadjaj ", ui.position);
+
+        console.log("substr: 1", ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-')));
+
+        for (var i in $scope.tables) {
+            if ($scope.tables[i].label === ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-'))) {
+                console.log("substr: 2", ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-')));
+                console.log("dogadjaj 2", ui.position);
+                $scope.tables[i].top = ui.position.top;
+                $scope.tables[i].left = ui.position.left;
+                break;
+            }
+        }
+    };
+
+    $scope.saveLayout = function() {
+        console.log("iz saveLayout");
+        TableFactory.updateTables($scope.tables).then(function(response) {
+            console.log("saveLayout: success");
+        }, function(response) {
+            console.log("saveLayout: error");
+        });
     };
 
     $scope.initialize = function() {

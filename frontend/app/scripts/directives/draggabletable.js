@@ -4,7 +4,8 @@ angular.module('rezervoarApp')
         return {
             restrict: 'A',
             scope: {
-                callback: '&onResize'
+                onResize: '&onResize',
+                onDragstop: '&onDragstop'
             },
             link: function postLink(scope, elem, attrs) {
                 elem.resizable({handles: "n, e, s, w, ne, se, sw, nw"});
@@ -12,9 +13,16 @@ angular.module('rezervoarApp')
 
                 elem.on('resize', function (evt, ui) {
                     scope.$apply(function() {
-                        if (scope.callback) {
-                            scope.callback({$evt: evt, $ui: ui });
-                        }
+                        scope.onResize({$evt: evt, $ui: ui});
+                    });
+                });
+
+                elem.on('dragstop', function (evt, ui) {
+                    scope.$apply(function() {
+                        console.log("iz dragstop: ");
+                        console.log("evt: ", evt);
+                        console.log("ui: ", ui);
+                        scope.onDragstop({$evt: evt, $ui: ui});
                     });
                 });
             }
