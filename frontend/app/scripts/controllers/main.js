@@ -26,12 +26,19 @@ angular.module('rezervoarApp')
             console.log('iz getReservations: data: ', JSON.stringify(response.data));
             $scope.tables = response.data.tables;
 
+            // mockovani podaci
             var bla = 200;
+            var bla2 = 50;
             for (var i in $scope.tables) {
                 $scope.tables[i].position = {};
                 $scope.tables[i].position.top = bla;
                 $scope.tables[i].position.left = bla;
                 bla = bla + 50;
+
+                $scope.tables[i].dimensions = {};
+                $scope.tables[i].dimensions.height = bla2;
+                $scope.tables[i].dimensions.width = bla2;
+                bla2 = bla2 + 30;
             }
 
             console.log("iz getReservations: tables: ", JSON.stringify($scope.tables));
@@ -72,18 +79,24 @@ angular.module('rezervoarApp')
     };
 
     $scope.savePosition = function(evt, ui) {
-        console.log("evt 1", evt);
-        console.log("ui 1", ui.helper[0].id);
-        console.log("dogadjaj ", ui.position);
-
-        console.log("substr: 1", ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-')));
+        console.log("savePosition");
 
         for (var i in $scope.tables) {
             if ($scope.tables[i].label === ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-'))) {
-                console.log("substr: 2", ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-')));
-                console.log("dogadjaj 2", ui.position);
-                $scope.tables[i].top = ui.position.top;
-                $scope.tables[i].left = ui.position.left;
+                $scope.tables[i].position.top = ui.position.top;
+                $scope.tables[i].position.left = ui.position.left;
+                break;
+            }
+        }
+    };
+
+    $scope.saveDimensions = function(evt, ui) {
+        console.log("saveDimensions");
+
+        for (var i in $scope.tables) {
+            if ($scope.tables[i].label === ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-'))) {
+                $scope.tables[i].dimensions.height = ui.size.height;
+                $scope.tables[i].dimensions.width = ui.size.width;
                 break;
             }
         }
