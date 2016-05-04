@@ -20,7 +20,7 @@
     <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css">
 
   </head>
-  <body ng-app="rezervoarApp" ng-controller='MainCtrl'>
+  <body ng-app="rezervoarApp" ng-controller='MainController'>
   <!-- <div ng-view> -->
 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -40,175 +40,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="./">Rezervacije <span class="sr-only">(current)</span></a></li>
                         <li><a href="../navbar-static-top/">Setup</a></li>
-                        <li><a href="../navbar-fixed-top/">Odjavi se</a></li>
+                        <li ng-if="currentUser"><a href="../navbar-fixed-top/">Odjavi se</a></li>
+                        <li ng-if="currentUser"><a href="../navbar-fixed-top/">{{ currentUser.username }}</a></li>
                     </ul>
                 </div><!--/.navbar-collapse -->
             </div>
         </nav>
+<ng-view>
 
-    <div class="jumbotron">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-8 text-center slider-wrapper">
-
-                        <rzslider rz-slider-model="slider.minValue"
-                            rz-slider-high="slider.maxValue"
-                            rz-slider-options="slider.options"
-                            class="slider">
-                        </rzslider>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <button class="save-button" data-ng-click="saveLayout()">Save layout</button>
-            <div id="#drag-area" class="white-area">
-                <div class="row">
-
-                    <div class="col-xs-12 col-sm-8 text-center">
-                        <div class="panel">
-                            <img src="images/plan.png" class="img-rounded" alt="Plan" width="750" height="500">
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-4 text-center">
-                        <div class="right-side">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                <div class="panel-group" id="accordion">
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                      <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <p>
-                                21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                              <span class="text-right">REZERVISANO<span>
-                            </p>
-                          Pera Peric 22
-                        </h4>
-                      </div>
-                      <div id="collapse1" class="collapsed panel-collapse collapse">
-                        <div class="panel-body">
-                            <label>Telefon: </label> 0641234567
-                            <br/>
-                            <label>Email: </label> pera.peric@gmail.com
-                        </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                      <div class="panel-heading">
-                          <h4 class="panel-title">
-                              <p>
-                                  21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                                <span class="text-right">REZERVISANO<span>
-                              </p>
-                            Pera Peric 22
-                          </h4>
-                      </div>
-                      <div id="collapse2" class="collapsed panel-collapse collapse">
-                          <div class="panel-body">
-                              <label>Telefon: </label> 0641234567
-                              <br/>
-                              <label>Email: </label> pera.peric@gmail.com
-                          </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-                      <div class="panel-heading">
-                          <h4 class="panel-title">
-                              <p>
-                                  21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                                <span class="text-right">REZERVISANO<span>
-                              </p>
-                            Pera Peric 22
-                          </h4>
-                      </div>
-                      <div id="collapse3" class="collapsed panel-collapse collapse">
-                          <div class="panel-body">
-                              <label>Telefon: </label> 0641234567
-                              <br/>
-                              <label>Email: </label> pera.peric@gmail.com
-                          </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse4">
-                      <div class="panel-heading">
-                          <h4 class="panel-title">
-                              <p>
-                                  21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                                <span class="text-right">REZERVISANO<span>
-                              </p>
-                            Pera Peric 22
-                          </h4>
-                      </div>
-                      <div id="collapse4" class="panel-collapse collapse">
-                          <div class="panel-body">
-                              <label>Telefon: </label> 0641234567
-                              <br/>
-                              <label>Email: </label> pera.peric@gmail.com
-                          </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse5">
-                      <div class="panel-heading">
-                          <h4 class="panel-title">
-                              <p>
-                                  21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                                <span class="text-right">REZERVISANO<span>
-                              </p>
-                            Pera Peric 22
-                          </h4>
-                      </div>
-                      <div id="collapse5" class="panel-collapse collapse">
-                          <div class="panel-body">
-                              <label>Telefon: </label> 0641234567
-                              <br/>
-                              <label>Email: </label> pera.peric@gmail.com
-                          </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default" data-toggle="collapse" data-parent="#accordion" href="#collapse6">
-                      <div class="panel-heading">
-                          <h4 class="panel-title">
-                              <p>
-                                  21:00 - 23:00 <span class="glyphicon glyphicon-user">3</span>
-                                <span class="text-right">REZERVISANO<span>
-                              </p>
-                            Pera Peric 22
-                          </h4>
-                      </div>
-                      <div id="collapse6" class="panel-collapse collapse">
-                          <div class="panel-body">
-                              <label>Telefon: </label> 0641234567
-                              <br/>
-                              <label>Email: </label> pera.peric@gmail.com
-                          </div>
-                      </div>
-                    </div>
-                </div>
-
-                <div data-ng-repeat="tab in tables | unique: 'label'">
-                    <div id="{{tab.label}}-div" draggable-table on-resize="scaleIntervals($evt, $ui)" on-resizestop="saveDimensions($evt, $ui)" on-dragstop="savePosition($evt, $ui)"
-                        style="position:absolute;left:{{tab.position.left}}px;top:{{tab.position.top}}px;height:{{tab.dimensions.height}}px;width:{{tab.dimensions.width}}px;">
-                        <time-line id="{{tab.label}}-timeline" start-time="startTime" end-time="endTime" taken-intervals="tab.takenList" style="width:100%;"></time-line>
-                        <aside id="{{tab.label}}" ng-class="{'taken': tab.taken}" style="width:100%;height:100%;">
-                            <span>{{tab.label}}</span><br/>
-                            <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
-                        </aside>
-                    </div>
-                </div>
-
-            </div>
-
-            </div>
-
-            </div>
-            </div>
-
-    </div>
+</ng-view>
 
     <div class="footer">
       <div class="container">
@@ -251,12 +91,16 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/logincontroller.js"></script>
+        <script src="scripts/controllers/maincontroller.js"></script>
         <script src="scripts/directives/draggabletable.js"></script>
         <script src="scripts/directives/timeline.js"></script>
+        <script src="scripts/services/authenticationfactory.js"></script>
+        <script src="scripts/services/authenticationinterceptor.js"></script>
         <script src="scripts/services/guestfactory.js"></script>
-        <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/services/reservationfactory.js"></script>
+        <script src="scripts/services/session.js"></script>
+        <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/unique.js"></script>
 
         <!-- endbuild -->

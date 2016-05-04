@@ -2,14 +2,26 @@
 
 /**
  * @ngdoc function
- * @name rezervoarApp.controller:MainCtrl
+ * @name rezervoarApp.controller:MainController
  * @description
- * # MainCtrl
+ * # MainController
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-  .controller('MainCtrl', ['$scope', '$rootScope', 'GuestFactory', 'TableFactory',
-    'ReservationFactory', function ($scope, $rootScope, GuestFactory, TableFactory, ReservationFactory) {
+    .controller('MainController', ['$scope', '$rootScope', 'USER_ROLES',
+        'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
+        function ($scope, $rootScope, USER_ROLES, GuestFactory, TableFactory,
+        ReservationFactory, AuthenticationFactory) {
+
+    $scope.currentUser = null;
+    $scope.userRoles = USER_ROLES;
+    $scope.isAuthorized = AuthenticationFactory.isAuthorized;
+
+    $scope.setCurrentUser = function (user) {
+        console.log("scope.setCurrentUser");
+        console.log("scope.setCurrentUser: user: ", user);
+        $scope.currentUser = user;
+    };
 
     $scope.getGuest = function () {
         GuestFactory.getGuest(4).then(function (response) {
@@ -22,30 +34,31 @@ angular.module('rezervoarApp')
     };
 
     $scope.getReservations = function (resDate, startTime, endTime, level) {
-        ReservationFactory.getReservations(resDate, startTime, endTime, level).then(function (response) {
-            console.log('iz getReservations: data: ', JSON.stringify(response.data));
-            $scope.tables = response.data.tables;
+        ReservationFactory.getReservations(resDate, startTime, endTime, level)
+            .then(function (response) {
+                console.log('iz getReservations: data: ', JSON.stringify(response.data));
+                $scope.tables = response.data.tables;
 
-            // mockovani podaci
-            var bla = 200;
-            var bla2 = 50;
-            for (var i in $scope.tables) {
-                $scope.tables[i].position = {};
-                $scope.tables[i].position.top = bla;
-                $scope.tables[i].position.left = bla;
-                bla = bla + 50;
+                // mockovani podaci
+                var bla = 200;
+                var bla2 = 50;
+                for (var i in $scope.tables) {
+                    $scope.tables[i].position = {};
+                    $scope.tables[i].position.top = bla;
+                    $scope.tables[i].position.left = bla;
+                    bla = bla + 50;
 
-                $scope.tables[i].dimensions = {};
-                $scope.tables[i].dimensions.height = bla2;
-                $scope.tables[i].dimensions.width = bla2;
-                bla2 = bla2 + 30;
-            }
+                    $scope.tables[i].dimensions = {};
+                    $scope.tables[i].dimensions.height = bla2;
+                    $scope.tables[i].dimensions.width = bla2;
+                    bla2 = bla2 + 30;
+                }
 
             console.log("iz getReservations: tables: ", JSON.stringify($scope.tables));
-        },
-        function (response) {
-            console.log('reservation error response: ', JSON.stringify(response));
-        });
+            },
+            function (response) {
+                console.log('reservation error response: ', JSON.stringify(response));
+            });
     };
 
     $scope.slider = {
