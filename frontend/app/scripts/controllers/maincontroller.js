@@ -8,9 +8,9 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-    .controller('MainController', ['$scope', '$rootScope', 'USER_ROLES',
+    .controller('MainController', ['$scope', '$rootScope', '$location', 'USER_ROLES',
         'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
-        function ($scope, $rootScope, USER_ROLES, GuestFactory, TableFactory,
+        function ($scope, $rootScope, $location, USER_ROLES, GuestFactory, TableFactory,
         ReservationFactory, AuthenticationFactory) {
 
     $scope.currentUser = null;
@@ -21,6 +21,15 @@ angular.module('rezervoarApp')
         console.log("scope.setCurrentUser");
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
+    };
+
+
+    $scope.logout = function () {
+        console.log("scope.logout: currentUser: ", $scope.currentUser);
+        AuthenticationFactory.logout();
+        $scope.currentUser = null;
+        console.log("scope.logout: currentUser 2: ", $scope.currentUser);
+        $location.path('/login');
     };
 
     $scope.getGuest = function () {

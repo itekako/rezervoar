@@ -34,6 +34,11 @@ angular.module('rezervoarApp')
             // });
         };
 
+        factory.logout = function() {
+            console.log("AuthenticationFactory: logout");
+            Session.destroy();
+        };
+
         factory.isAuthenticated = function () {
             console.log("AuthenticationFactory: isAuthenticated: ", !!Session.userId);
             return !!Session.userId;
@@ -44,8 +49,6 @@ angular.module('rezervoarApp')
             if (!angular.isArray(authorizedRoles)) {
                 authorizedRoles = [authorizedRoles];
             }
-            console.log("AuthenticationFactory: isAuthorized", factory.isAuthenticated() &&
-                authorizedRoles.indexOf(Session.userRole) !== -1);
             return (factory.isAuthenticated() &&
                 authorizedRoles.indexOf(Session.userRole) !== -1);
         };
