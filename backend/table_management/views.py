@@ -162,6 +162,7 @@ def updateOriginal(originalReservation):
     updatedOriginal['id_guest'] = originalReservation.id_guest.id
     return updatedOriginal
 
+
 def makeGuest(firstName, lastName, phoneNumber):
     newGuest = {}
     newGuest['first_name'] = firstName
@@ -181,6 +182,14 @@ def addFreeTables(allTables, lista, result):
             insertData['comment'] = None
             insertData['seats'] = table.seats
             insertData['taken'] = False
+            position = {}
+            position['left'] = table.position_left
+            position['top'] = table.position_top
+            insertData['position'] = position
+            dimensions = {}
+            dimensions['width'] = table.width
+            dimensions['height'] = table.height
+            insertData['dimensions'] = dimensions
             result['tables'].append(insertData)
     return result
 
@@ -206,6 +215,14 @@ def addTakenTables(reservations, level, lista, startOriginal, endOriginal, resul
                     insertData = {}
                     insertData['takenList'] = []
                     insertData['takenList'].append(listElement)
+                    position = {}
+                    position['left'] = tableByLabel.position_left
+                    position['top'] = tableByLabel.position_top
+                    insertData['position'] = position
+                    dimensions = {}
+                    dimensions['width'] = tableByLabel.width
+                    dimensions['height'] = tableByLabel.height
+                    insertData['dimensions'] = dimensions
                     insertData['label'] = tableByLabel.label
                     insertData['comment'] = reservation.comment
                     insertData['seats'] = tableByLabel.seats
@@ -230,6 +247,25 @@ def addTakenTables(reservations, level, lista, startOriginal, endOriginal, resul
                         tmp['taken'] = True
                     tmp['takenList'].append(listElement)
     return result
+
+
+def updateTable(table):
+    label = str(table['label'])
+    position = table['position']
+    dimensions = table['dimensions']
+    originalTable = Table.objects.get(label=label)
+    updatedTable = originalTable.__dict__
+    updatedTable['position_top'] = int(position['top'])
+    updatedTable['position_left'] = int(position['left'])
+    updatedTable['width'] = int(dimensions['width'])
+    updatedTable['height'] = int(dimensions['height'])
+    updatedTable['level'] = originalTable.level.id
+    updatedTable = TableSerializer(originalTable, data=updatedTable)
+    if updatedTable.is_valid() is False:
+        return Response(updatedTable.errors)
+    else:
+        updatedTable.save()
+    return
 
 
 # dodaje novu rezervaciju u bazu
@@ -329,6 +365,16 @@ class TablesReserved(APIView):
         for item in result['tables']:
             item['takenList'] = sorted(item['takenList'], key=lambda k: k['startDate'])
         return Response(json.loads(json.dumps(result)), content_type="application/json")
+
+
+# menja stolovima position i dimensions
+class UpdateTables(APIView):
+    def put(self, request, format=None):
+        data = request.data
+        tables = data.get('tables')
+        for table in tables:
+            updateTable(table)
+        return Response(request.data)
 
 
 # vraca level sa zadatim label
