@@ -19,7 +19,7 @@ angular.module('rezervoarApp')
         };
 
         factory.updateTables = function(tables) {
-            console.log("iz TableFactory, updateTables: ", tables);
+            console.log("iz TableFactory, updateTables: ", JSON.stringify(tables));
             return $http({
                 method: 'PUT',
                 url: routes.update,

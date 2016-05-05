@@ -27,6 +27,7 @@ angular.module('rezervoarApp')
     $scope.logout = function () {
         console.log("scope.logout: currentUser: ", $scope.currentUser);
         AuthenticationFactory.logout();
+        $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
         $scope.currentUser = null;
         console.log("scope.logout: currentUser 2: ", $scope.currentUser);
         $location.path('/login');
@@ -125,7 +126,7 @@ angular.module('rezervoarApp')
     };
 
     $scope.saveLayout = function() {
-        console.log("iz saveLayout");
+        console.log("iz saveLayout, tables: ", JSON.stringify($scope.tables));
         TableFactory.updateTables($scope.tables).then(function(response) {
             console.log("saveLayout: success");
         }, function(response) {
