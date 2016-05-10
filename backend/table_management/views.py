@@ -13,10 +13,33 @@ from table_management.models import Guest, Table, Level, Reservation
 from table_management.serializers import GuestSerializer, TableSerializer,\
     LevelSerializer, ReservationSerializer, UserSerializer
 
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import json
+
+
+class Authentication(APIView):
+    def post(self, request):
+        data = request.data
+        user = authenticate(username=data.get('username'), password=data.get('password'))
+        if user is not None:
+            # the password verified for the user
+            if user.is_active:
+                print("User is valid, active and authenticated")
+                user = UserSerializer(user)
+                return Response(user.data)
+            else:
+                answer = {'error': 'The password is valid, but the account has been disabled!'}
+                print("The password is valid, but the account has been disabled!")
+                return Response(answer)
+        else:
+            # the authentication system was unable to verify the username and password
+            answer = {'error': 'The username and password were incorrect.'}
+            print("The username and password were incorrect.")
+            return Response(answer)
+
 
 
 # vraca gosta sa zadatim ID
@@ -45,20 +68,6 @@ class Guests(APIView):
         guests = Guest.objects.all()
         guests = GuestSerializer(guests, many=True)
         return Response(guests.data)
-
-
-# vraca sto sa zadatim ID
-class TableById(APIView):
-    def get_object(self, pk):
-        try:
-            return Table.objects.get(pk=pk)
-        except Table.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        table = self.get_object(pk)
-        table = TableSerializer(table)
-        return Response(table.data)
 
 
 # vraca sve stolove na nivou sa zadatim Label
@@ -269,7 +278,7 @@ def updateTable(table):
 
 
 # dodaje novu rezervaciju u bazu
-class AddReservation(APIView):
+class Reservations(APIView):
     def post(self, request, format=None):
         data = request.data
         start_d = parseDate(data.get('date'), data.get('startTime'))
@@ -308,7 +317,6 @@ class AddReservation(APIView):
 
 
 # menja vec postojecu rezervaciju
-class UpdateReservation(APIView):
     def put(self, request, format=None):
         data = request.data
         # nalazimo originalnu rezervaciju
@@ -331,8 +339,25 @@ class UpdateReservation(APIView):
         return Response(request.data)
 
 
-# vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
-class TablesReserved(APIView):
+class CancelReservation(APIView):
+    def put(self, request, format=None):
+        data = request.data
+        idOriginal = int(data.get('idOriginal'))
+        originalReservation = Reservation.objects.get(pk=idOriginal)
+        updatedOriginal = originalReservation.__dict__
+        updatedOriginal['canceled'] = 1
+        updatedOriginal['id_user'] = originalReservation.id_user.id
+        updatedOriginal['id_guest'] = originalReservation.id_guest.id
+        updatedOriginal = ReservationSerializer(originalReservation, data=updatedOriginal)
+        if updatedOriginal.is_valid() is False:
+            return Response(updatedOriginal.errors)
+        else:
+            updatedOriginal.save()
+        return Response(request.data)
+
+
+class Tables(APIView):
+    # vraca stolove rezervisane za odredjeni datum, na odrejenom nivou
     def post(self, request, format=None):
         data = request.data
         # iz string u datetime
@@ -368,7 +393,6 @@ class TablesReserved(APIView):
 
 
 # menja stolovima position i dimensions
-class UpdateTables(APIView):
     def put(self, request, format=None):
         data = request.data
         tables = data.get('tables')

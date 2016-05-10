@@ -36,8 +36,8 @@ class Reservation(models.Model):
     id_original = models.ForeignKey('self', default=None, null=True, blank=True)
     id_user = models.ForeignKey(User)
     comment = models.CharField(max_length=256)
-    valid = models.IntegerField(default=1)
-    canceled = models.IntegerField(default=0)
+    valid = models.IntegerField(default=1, editable=False)
+    canceled = models.IntegerField(default=0, editable=False)
 
     def __unicode__(self):
         return self.tables
@@ -46,11 +46,6 @@ class Reservation(models.Model):
 class Level(models.Model):
     label = models.CharField(max_length=128, unique=True)
     scheme = models.CharField(max_length=128, unique=True)
-    # slug = models.SlugField(unique=True)
-    #
-    # def save(self):
-    #     self.slug = slugify(self.label)
-    #     super(Level, self).save()
 
     def __unicode__(self):
         return self.label
@@ -62,8 +57,8 @@ class Table(models.Model):
     seats = models.IntegerField(default=0)
     position_top = models.IntegerField(default=0)
     position_left = models.IntegerField(default=0)
-    width = models.IntegerField(null=False)
-    height = models.IntegerField(null=False)
+    width = models.IntegerField(default=30, null=False)
+    height = models.IntegerField(default=30, null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # slug = models.SlugField()
