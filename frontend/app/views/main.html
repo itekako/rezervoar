@@ -26,15 +26,15 @@
                         <div class="date-custom">
                             <p>
                                 <a href="javascript:void(0);">
-                                    <span>
+                                    <span ng-click="open()">
                                         <i class="glyphicon glyphicon-calendar"></i>
-                                        <b>Ponedeljak</b>
-                                        <em>10.04.2016.</em>
+                                        <b>{{dt | date: 'EEEE' | uppercase}}</b>
+                                        <em>{{dt | date: 'dd.MM.yyyy.'}}</em>
                                         <i class="glyphicon glyphicon-chevron-down"></i>
                                     </span>
+                                    <input type="text" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup.opened"
+                                        datepicker-options="dateOptions" ng-required="true" close-text="Close" />
                                 </a>
-                                <input calendar type="text" id="datepicker" />
-                                <!-- <input type="text" id="datepicker" disabled="" > -->
                             </p>
                         </div>
 

@@ -8,17 +8,16 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-    .controller('MainController', ['$scope', '$rootScope', '$location', 'USER_ROLES',
-        'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
-        function ($scope, $rootScope, $location, USER_ROLES, GuestFactory, TableFactory,
-        ReservationFactory, AuthenticationFactory) {
+    .controller('MainController', ['$scope', '$rootScope', '$location', '$filter', 'AUTH_EVENTS',
+        'USER_ROLES', 'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
+        function ($scope, $rootScope, $location, $filter, AUTH_EVENTS, USER_ROLES, GuestFactory,
+        TableFactory, ReservationFactory, AuthenticationFactory) {
 
     $scope.currentUser = null;
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthenticationFactory.isAuthorized;
 
     $scope.setCurrentUser = function (user) {
-        console.log("scope.setCurrentUser");
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
     };
@@ -48,23 +47,6 @@ angular.module('rezervoarApp')
             .then(function (response) {
                 console.log('iz getReservations: data: ', JSON.stringify(response.data));
                 $scope.tables = response.data.tables;
-
-                // mockovani podaci
-                var bla = 200;
-                var bla2 = 50;
-                for (var i in $scope.tables) {
-                    $scope.tables[i].position = {};
-                    $scope.tables[i].position.top = bla;
-                    $scope.tables[i].position.left = bla;
-                    bla = bla + 50;
-
-                    $scope.tables[i].dimensions = {};
-                    $scope.tables[i].dimensions.height = bla2;
-                    $scope.tables[i].dimensions.width = bla2;
-                    bla2 = bla2 + 30;
-                }
-
-            console.log("iz getReservations: tables: ", JSON.stringify($scope.tables));
             },
             function (response) {
                 console.log('reservation error response: ', JSON.stringify(response));
@@ -89,7 +71,10 @@ angular.module('rezervoarApp')
             $scope.startTime = this.stepsArray[$scope.slider.minValue];
             $scope.endTime = this.stepsArray[$scope.slider.maxValue];
 
-            $scope.getReservations('nekidatum', $scope.startTime, $scope.endTime, 'drugisprat');
+            var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
+            console.log("onchange datetime: ", filterDateTime);
+
+            $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
         }
       }
     };
@@ -126,19 +111,119 @@ angular.module('rezervoarApp')
     };
 
     $scope.saveLayout = function() {
-        console.log("iz saveLayout, tables: ", JSON.stringify($scope.tables));
         TableFactory.updateTables($scope.tables).then(function(response) {
-            console.log("saveLayout: success");
+            console.log("saveLayout: success: response: ", response);
         }, function(response) {
-            console.log("saveLayout: error");
+            console.log("saveLayout: error: response: ", response);
         });
     };
 
+    $scope.today = function() {
+        $scope.dt = new Date();
+        console.log("iz today: dt", $scope.dt);
+    };
+
+    $scope.clear = function() {
+        $scope.dt = null;
+    };
+
+    $scope.inlineOptions = {
+        customClass: getDayClass,
+        minDate: new Date()
+    };
+
+    $scope.dateOptions = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(2050, 5, 22),
+        minDate: new Date(2016, 1, 1),
+        startingDay: 1,
+        showWeeks: false
+    };
+
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+        mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+    $scope.toggleMin = function() {
+        $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+        $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+    };
+
+    $scope.toggleMin();
+
+    $scope.open = function() {
+        $scope.popup.opened = true;
+    };
+
+    $scope.setDate = function(year, month, day) {
+        $scope.dt = new Date(year, month, day);
+    };
+
+    $scope.format = 'dd.MM.yyyy';
+
+    $scope.popup = {
+        opened: false
+    };
+
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var afterTomorrow = new Date();
+
+    afterTomorrow.setDate(tomorrow.getDate() + 1);
+
+    $scope.events = [
+        {
+            date: tomorrow,
+            status: 'full'
+        },
+        {
+            date: afterTomorrow,
+            status: 'partially'
+        }
+    ];
+
+    function getDayClass(data) {
+        var date = data.date,
+        mode = data.mode;
+        if (mode === 'day') {
+            var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+            for (var i = 0; i < $scope.events.length; i++) {
+                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+                console.log("iz getDayClass: currentDay",currentDay);
+                if (dayToCheck === currentDay) {
+                    return $scope.events[i].status;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    $scope.$watch('dt', function() {
+
+        var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
+        console.log("watch datetime: ", filterDateTime);
+
+        $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+    });
+
     $scope.initialize = function() {
+        $scope.today();
+
         $scope.startTime = $scope.slider.options.stepsArray[$scope.slider.minValue];
         $scope.endTime = $scope.slider.options.stepsArray[$scope.slider.maxValue];
-        $scope.getReservations('nekidatum', $scope.startTime, $scope.endTime, 'drugisprat');
+
+        var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
+        console.log("initialize datetime: ", filterDateTime);
+
+        $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
     };
+
 
     $scope.initialize();
 

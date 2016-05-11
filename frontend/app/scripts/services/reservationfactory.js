@@ -5,7 +5,7 @@ angular.module('rezervoarApp')
         var factory = {};
 
         var routes = {
-            getAll: 'http://api-rezervoar:8000/' + 'table_management/api/reserved-tables/'
+            getAll: 'http://api-rezervoar:8000/' + 'table_management/api/tables/'
         };
 
         factory.getReservations = function(resDate, startTime, endTime, level) {
@@ -14,7 +14,7 @@ angular.module('rezervoarApp')
             console.log('iz reservation servisa: startTime: ' + startTime);
             console.log('iz reservation servisa: endTime: ' + endTime);
             console.log('iz reservation servisa: level: ' + level);
-            resDate = '20.04.2016';
+            //resDate = '20.04.2016';
             return $http({
                 method: 'POST',
                 url: routes.getAll,

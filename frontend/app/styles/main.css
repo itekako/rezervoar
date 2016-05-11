@@ -143,6 +143,7 @@ date-custom p {
     border: 0 none;
     height: 0px;
     outline: none;
+    color: white;
 }
 .date-custom span i.glyphicon-chevron-down {
     font-size: 12px;
