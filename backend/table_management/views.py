@@ -36,8 +36,8 @@ class Authentication(APIView):
                 return Response(answer)
         else:
             # the authentication system was unable to verify the username and password
-            answer = {'error': 'The username and password were incorrect.'}
-            print("The username and password were incorrect.")
+            answer = {'error': 'The username or password are incorrect.'}
+            print("The username or password are incorrect.")
             return Response(answer)
 
 

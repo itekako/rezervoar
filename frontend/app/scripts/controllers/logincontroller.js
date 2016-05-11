@@ -17,23 +17,33 @@ angular.module('rezervoarApp')
         password: ''
     };
 
-    $scope.login = function (credentials) {
+    $scope.incorrectCredentials = null;
+    $scope.error = '';
+
+    $scope.login = function () {
         console.log("scope.login: credentials: ", $scope.credentials);
 
-        // mock
-        var user = AuthenticationFactory.login(credentials);
-        $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-        console.log("LoginController: login: user", user);
-        $scope.setCurrentUser(user);
-        console.log("lokacija: ", $location.path());
-        $location.path('/reservations');
+        AuthenticationFactory.login($scope.credentials).then(function (response) {
+            console.log("auth: success, response:", response);
+            console.log("auth: success, response.data:", response.data);
 
-        // AuthenticationFactory.login(credentials).then(function (user) {
-        //     $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-        //     $scope.setCurrentUser(user);
-        // }, function () {
-        //     $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-        // });
+            if (response.data.error) {
+                $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+                $scope.incorrectCredentials = true;
+                $scope.error = response.data.error;
+                console.log("LoginController: login: failed, error: ", response.data.error);
+            } else {
+                $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+                console.log("LoginController: login: uspelo", response.data);
+                $scope.setCurrentUser(response.data.username);
+                $scope.incorrectCredentials = null;
+                console.log("lokacija: ", $location.path());
+                $location.path('/reservations');
+            }
+        }, function (response) {
+            console.log("auth: error, response:", response);
+            console.log("auth: error, response.data:", response.data);
+        });
     };
 
 }]);

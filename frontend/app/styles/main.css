@@ -151,3 +151,8 @@ date-custom p {
     right: 0;
     position: absolute;
 }
+
+.login-error {
+    margin-top: 15px;
+    color: red;
+}
