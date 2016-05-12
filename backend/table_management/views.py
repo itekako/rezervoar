@@ -277,8 +277,13 @@ def updateTable(table):
     return
 
 
-# dodaje novu rezervaciju u bazu
 class Reservations(APIView):
+    def get(self, request, format=None):
+        reservation = Reservation.objects.all()
+        reservation = ReservationSerializer(reservation, many=True)
+        return Response(reservation.data)
+
+# vraca rezervacije u odredjenom vremenu na oredjenmo spratu
     def post(self, request, format=None):
         data = request.data
         start_d = parseDate(data.get('date'), data.get('startTime'))
