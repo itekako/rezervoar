@@ -15,6 +15,7 @@ urlpatterns = patterns(
     url(r'^api/level/(?P<label>[a-zA-z0-9\s_-]+)/$', views.LevelByLabel.as_view()),
     # REZERVACIJE
     url(r'^api/reservations/$', views.Reservations.as_view()),
+    url(r'^api/reservations/(?P<date>\d\d-\d\d-\d\d\d\d)$', views.Reservations.as_view()),
     url(r'^api/reservation/(?P<pk>[0-9]+)/$', views.ReservationById.as_view()),
     url(r'^api/cancel-reservation/$', views.CancelReservation.as_view()),
     # LOGIN

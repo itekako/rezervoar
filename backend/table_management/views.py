@@ -278,12 +278,32 @@ def updateTable(table):
 
 
 class Reservations(APIView):
-    def get(self, request, format=None):
-        reservation = Reservation.objects.all()
-        reservation = ReservationSerializer(reservation, many=True)
-        return Response(reservation.data)
+    def get(self, request, date, format=None):
+        print "REZERVACIJE PO DATUMU"
+        date = datetime.strptime(str(date), "%d-%m-%Y").date()
+        reservations = Reservation.objects.all()
+        result = {}
+        result['reservations'] = []
+        for reservation in reservations:
+            if (reservation.start_date.date() == date):
+                insertData = {}
+                insertData['startDate'] = reservation.start_date.strftime("%d.%m.%Y %H:%M")
+                insertData['endDate'] = reservation.end_date.strftime("%d.%m.%Y %H:%M")
+                insertData['tables'] = []
+                for table in reservation.tables.split(','):
+                    table = table.strip()
+                    element = {}
+                    element['label'] = table
+                    insertData['tables'].append(element)
+                insertData['numberOfGuests'] = reservation.number_of_guests
+                insertData['firstName'] = reservation.id_guest.first_name
+                insertData['last_name'] = reservation.id_guest.last_name
+                insertData['phoneNumber'] = reservation.id_guest.phone_number
+                insertData['email'] = reservation.id_guest.email
+                result['reservations'].append(insertData)
+        return Response(json.loads(json.dumps(result)), content_type="application/json")
 
-# vraca rezervacije u odredjenom vremenu na oredjenmo spratu
+# dodaje novu rezervaciju
     def post(self, request, format=None):
         data = request.data
         start_d = parseDate(data.get('date'), data.get('startTime'))
@@ -431,18 +451,4 @@ class ReservationById(APIView):
     def get(self, request, pk, format=None):
         reservation = self.get_object(pk)
         reservation = ReservationSerializer(reservation)
-        return Response(reservation.data)
-
-
-# vraca sve rezervacije
-class ReservationAll(APIView):
-    def get_object(self, pk):
-        try:
-            return Reservation.objects.get(pk=pk)
-        except Reservation.DoesNotExist:
-            raise Http404
-
-    def get(self, request, format=None):
-        reservation = Reservation.objects.all()
-        reservation = ReservationSerializer(reservation, many=True)
         return Response(reservation.data)
