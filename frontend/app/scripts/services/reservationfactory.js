@@ -5,7 +5,7 @@ angular.module('rezervoarApp')
         var factory = {};
 
         var routes = {
-            getAll: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/20-04-2016',
+            getAll: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/:date',
             getAllTables: 'http://api-rezervoar:8000/' + 'table_management/api/tables/'
         };
 
@@ -28,12 +28,12 @@ angular.module('rezervoarApp')
             });
         };
 
-        factory.getReservations = function() {
-            console.log('iz reservation servisa: getReservations');
+        factory.getReservations = function(date) {
+            console.log('iz reservation servisa: getReservations, date', date);
             // ISPRAVI ZAKUCAN DATUM IZ RUTE
             return $http({
                 method: 'GET',
-                url: routes.getAll
+                url: routes.getAll.replace(':date', date)
             });
         };
 

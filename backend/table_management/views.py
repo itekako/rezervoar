@@ -297,7 +297,7 @@ class Reservations(APIView):
                     insertData['tables'].append(element)
                 insertData['numberOfGuests'] = reservation.number_of_guests
                 insertData['firstName'] = reservation.id_guest.first_name
-                insertData['last_name'] = reservation.id_guest.last_name
+                insertData['lastName'] = reservation.id_guest.last_name
                 insertData['phoneNumber'] = reservation.id_guest.phone_number
                 insertData['email'] = reservation.id_guest.email
                 result['reservations'].append(insertData)

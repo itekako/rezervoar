@@ -56,11 +56,15 @@ angular.module('rezervoarApp')
     };
 
     $scope.getReservations = function () {
-        ReservationFactory.getReservations()
+        var filterDateTime = $filter('date')($scope.dt, 'dd-MM-yyyy');
+        ReservationFactory.getReservations(filterDateTime)
             .then(function (response) {
-                console.log('iz getReservations: data: ', JSON.stringify(response.data));
-                $scope.reservations = response.data;
-                //$scope.reservations.tables = $scope.reservations.tables.split(',');
+                console.log('iz getReservations: data.reservations: ', JSON.stringify(response.data.reservations));
+                $scope.reservations = response.data.reservations;
+                for (var i in $scope.reservations) {
+                    $scope.reservations[i].startTime = $scope.reservations[i].startDate.split(' ')[1];
+                    $scope.reservations[i].endTime = $scope.reservations[i].endDate.split(' ')[1];
+                }
             },
             function (response) {
                 console.log('reservation error response: ', JSON.stringify(response));
@@ -224,6 +228,7 @@ angular.module('rezervoarApp')
         console.log("watch datetime: ", filterDateTime);
 
         $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+        $scope.getReservations();
     });
 
     $scope.initialize = function() {

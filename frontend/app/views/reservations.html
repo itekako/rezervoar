@@ -3,22 +3,21 @@
       data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
       <a class="row" href="javascript:void(0);">
                 <span class="col-xs-6 text-left">
-                    <span><i class="glyphicon glyphicon-time"></i>19:00 - 21:00<i class="glyphicon glyphicon-user"></i>{{res.number_of_guests}}</span>
+                    <span><i class="glyphicon glyphicon-time"></i>{{res.startTime}} - {{res.endTime}}<i class="glyphicon glyphicon-user"></i>{{res.numberOfGuests}}</span>
                 </span>
                 <span class="col-xs-6">
                     <strong class="pull-right green">Rezervisan</strong>
                 </span>
                 <span class="col-xs-6 text-left title">
-                    Pera Peric
+                    {{res.firstName}} {{res.lastName}}
                 </span>
                 <span class="col-xs-6">
-                    <strong data-ng-repeat=""class="pull-right gray">{{res.number_of_guests}}</strong>
-                    <!-- <strong class="pull-right gray">{{res.number_of_guests}}</strong> -->
+                    <strong data-ng-repeat="tab in res.tables" class="pull-right gray">{{tab.label}} </strong>
                 </span>
             </a>
             <span class="slide" id="collapse{{$index}}">
-                <b>E-mail: pera@gmail.com</b>
-                <b>Telefon: 064 15 15 590</b>
+                <b>E-mail: {{res.email}}</b>
+                <b>Telefon: {{res.phoneNumber}}</b>
             </span>
     </li>
 </ul>
