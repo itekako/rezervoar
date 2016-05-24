@@ -17,7 +17,8 @@ angular
         'ngSanitize',
         'ngTouch',
         'rzModule',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ui.router'
     ])
     .constant('AUTH_EVENTS', {
         loginSuccess: 'auth-login-success',
@@ -32,42 +33,51 @@ angular
         admin: 'admin',
         waiter: 'waiter'
     })
-    .config(function ($routeProvider, $httpProvider, USER_ROLES) {
-        $routeProvider
-        .when('/login', {
-            templateUrl: 'views/login.html',
-            controller: 'LoginController'
-        })
-        .when('/reservations', {
-            templateUrl: 'views/main.html',
-            controller: 'MainController',
-            controllerAs: 'main',
-            data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.waiter]
-            }
-        })
-        .otherwise({
-            redirectTo: '/login'
-        });
+    .config(function($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.when("", "home");
+        $urlRouterProvider.when("/", "home");
 
-        $httpProvider.interceptors.push(['$injector', function ($injector) {
-            return $injector.get('AuthenticationInterceptor');
-        }]);
-    })
-    .run(function ($rootScope, AUTH_EVENTS, AuthenticationFactory) {
-        $rootScope.$on('$stateChangeStart', function (event, next) {
-            console.log("run: onStateChangeStart");
-            var authorizedRoles = next.data.authorizedRoles;
-            if (!AuthenticationFactory.isAuthorized(authorizedRoles)) {
-                console.log("run: onStateChangeStart: iz ifa");
-                event.preventDefault();
-                if (AuthenticationFactory.isAuthenticated()) {
-                    console.log("run: onStateChangeStart: iz drugog ifa");
-                    $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-                } else {
-                    console.log("run: onStateChangeStart: iz elsa");
-                    $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+        $stateProvider
+            .state('home', {
+                url: '/home',
+                abstract: true,
+                templateUrl: 'views/main.html',
+                controller: 'MainController'
+            })
+            .state('home.reservations', {
+                url: '',
+                templateUrl: 'views/reservations.html',
+                controller: 'MainController'
+            })
+            .state('home.newreservation', {
+                url: '/newreservation',
+                templateUrl: 'views/newreservation.html',
+                controller: 'MainController',
+                onEnter: function(){
+                  console.log("enter home.newreservation");
                 }
-            }
-        });
-    });;
+            })
+            .state('home.editreservation', {
+                url: '/editreservation/:id',
+                templateUrl: 'views/editreservation.html',
+                controller: 'ReservationController'
+            });
+    });
+
+    // .run(function ($rootScope, AUTH_EVENTS, AuthenticationFactory) {
+    //     $rootScope.$on('$stateChangeStart', function (event, next) {
+    //         console.log("run: onStateChangeStart");
+    //         var authorizedRoles = next.data.authorizedRoles;
+    //         if (!AuthenticationFactory.isAuthorized(authorizedRoles)) {
+    //             console.log("run: onStateChangeStart: iz ifa");
+    //             event.preventDefault();
+    //             if (AuthenticationFactory.isAuthenticated()) {
+    //                 console.log("run: onStateChangeStart: iz drugog ifa");
+    //                 $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+    //             } else {
+    //                 console.log("run: onStateChangeStart: iz elsa");
+    //                 $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+    //             }
+    //         }
+    //     });
+    // });

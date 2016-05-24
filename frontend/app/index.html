@@ -44,9 +44,11 @@
                 </div><!--/.navbar-collapse -->
             </div>
         </nav>
-<ng-view>
+<!-- <ng-view>
 
-</ng-view>
+</ng-view> -->
+
+    <div ui-view></div>
 
     <div class="footer">
       <div class="container">
@@ -67,8 +69,6 @@
     </script>
 
 
-
-
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -82,16 +82,19 @@
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angularjs-slider/dist/rzslider.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="/bower_components/angular-i18n/angular-locale_sr-latn-rs.js"></script>
+    <script src="bower_components/angular-i18n/angular-locale_sr-latn-rs.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/logincontroller.js"></script>
         <script src="scripts/controllers/maincontroller.js"></script>
+        <script src="scripts/controllers/reservationcontroller.js"></script>
         <script src="scripts/directives/draggabletable.js"></script>
         <script src="scripts/directives/timeline.js"></script>
         <script src="scripts/services/authenticationfactory.js"></script>

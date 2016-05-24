@@ -17,6 +17,8 @@ angular.module('rezervoarApp')
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthenticationFactory.isAuthorized;
 
+    $scope.location = $location.path();
+
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
@@ -42,11 +44,23 @@ angular.module('rezervoarApp')
         });
     };
 
-    $scope.getReservations = function (resDate, startTime, endTime, level) {
-        ReservationFactory.getReservations(resDate, startTime, endTime, level)
+    $scope.getTables = function (resDate, startTime, endTime, level) {
+        ReservationFactory.getTables(resDate, startTime, endTime, level)
+            .then(function (response) {
+                console.log('iz getTables: data: ', JSON.stringify(response.data));
+                $scope.tables = response.data.tables;
+            },
+            function (response) {
+                console.log('getTables error response: ', JSON.stringify(response));
+            });
+    };
+
+    $scope.getReservations = function () {
+        ReservationFactory.getReservations()
             .then(function (response) {
                 console.log('iz getReservations: data: ', JSON.stringify(response.data));
-                $scope.tables = response.data.tables;
+                $scope.reservations = response.data;
+                //$scope.reservations.tables = $scope.reservations.tables.split(',');
             },
             function (response) {
                 console.log('reservation error response: ', JSON.stringify(response));
@@ -74,7 +88,7 @@ angular.module('rezervoarApp')
             var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
             console.log("onchange datetime: ", filterDateTime);
 
-            $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+            $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
         }
       }
     };
@@ -209,7 +223,7 @@ angular.module('rezervoarApp')
         var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
         console.log("watch datetime: ", filterDateTime);
 
-        $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+        $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
     });
 
     $scope.initialize = function() {
@@ -221,7 +235,8 @@ angular.module('rezervoarApp')
         var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
         console.log("initialize datetime: ", filterDateTime);
 
-        $scope.getReservations(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+        $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+        $scope.getReservations();
     };
 
 

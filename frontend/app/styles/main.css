@@ -39,6 +39,13 @@
     background: #FFF;
     border-radius: 6px;
     margin-top: 20px;
+    width: 1300px;
+    height: 650px;
+}
+.schema-img {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
 }
 .right-side {
     border-left: 1px solid #DDD;
@@ -155,4 +162,70 @@ date-custom p {
 .login-error {
     margin-top: 15px;
     color: red;
+}
+
+.reservations {
+    padding: 0;
+    margin: 0;
+}
+.reservations li {
+    list-style-type: none;
+    display: block;
+    border-bottom: 1px solid #DDD;
+}
+.reservations li:last-child {
+    border: 0 none;
+}
+.reservations li a {
+    display: block;
+    padding: 10px;
+    color: #A9A9A9;
+}
+.reservations li a span {
+    font-size: 14px;
+}
+.reservations li a span i {
+    padding: 0 5px 0 0;
+}
+.reservations li a span i.glyphicon-user {
+    padding-left: 15px;
+}
+span.title {
+    font-size: 18px !important;
+    font-weight: bold;
+    color: #333;
+    padding-top: 10px;
+}
+span.slide {
+    display: none;
+    background: #CFD4DA;
+    width: 100%;
+}
+span.slide b {
+    display: block;
+    line-height: 30px;
+    color: #333;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+.green {
+    background: green;
+    color: #FFF;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+.gray {
+    background: gray;
+    color: #FFF;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.form-placeholder {
+    color: #999;
 }
