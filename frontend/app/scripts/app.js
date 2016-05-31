@@ -34,8 +34,9 @@ angular
         waiter: 'waiter'
     })
     .config(function($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.when("", "home");
-        $urlRouterProvider.when("/", "home");
+        $urlRouterProvider.when("", "/home");
+        $urlRouterProvider.when("/", "/home");
+        $urlRouterProvider.otherwise("/home");
 
         $stateProvider
             .state('home', {
@@ -46,21 +47,15 @@ angular
             })
             .state('home.reservations', {
                 url: '',
-                templateUrl: 'views/reservations.html',
-                controller: 'MainController'
+                templateUrl: 'views/reservations.html'
             })
             .state('home.newreservation', {
                 url: '/newreservation',
-                templateUrl: 'views/newreservation.html',
-                controller: 'MainController',
-                onEnter: function(){
-                  console.log("enter home.newreservation");
-                }
+                templateUrl: 'views/newreservation.html'
             })
             .state('home.editreservation', {
                 url: '/editreservation/:id',
-                templateUrl: 'views/editreservation.html',
-                controller: 'ReservationController'
+                templateUrl: 'views/editreservation.html'
             });
     });
 
