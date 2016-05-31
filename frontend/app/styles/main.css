@@ -230,3 +230,11 @@ span.slide b {
 .form-placeholder {
     color: #999;
 }
+
+.new-reservation {
+    width: 90%;
+    margin: auto;
+}
+.res-msg {
+    font-style: italic;
+}
