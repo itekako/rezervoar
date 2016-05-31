@@ -31,7 +31,97 @@
 .navbar-nav li a:hover {
     border-color: #F3AF1E;
 }
-
+.breadcrumb {
+    background: #1F1F1F;
+    background: 0 none;
+    margin: 6px 0 0 0;
+    padding: 0;
+}
+.breadcrumb-custom {
+    background: #1F1F1F;
+    width: 100%;
+}
+.breadcrumb li {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.breadcrumb li a {
+    color: #BBB;
+    font-size: 16px;
+    display: block;
+    padding: 15px 15px 0 15px;
+    line-height: 1em;
+    margin: -14px 0 0 0;
+    line-height: 80px;
+}
+.breadcrumb li a:hover {
+    text-decoration: none;
+    color: #FFF;
+}
+.breadcrumb li:first-child a {
+    color: #FFF;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px 30px 0 0;
+    background: url("../img/arrow-r.png") right 37px  no-repeat;
+    display: block;
+    margin: 0;
+}
+.breadcrumb>li+li:before {
+    content: '' !important;
+    padding: 0 !important;
+}
+.breadcrumb li.active a {
+    color: #F3AF1E;
+    background: url("../img/arrow-up.png") bottom center no-repeat;
+}
+.main-button {
+    background: #F3AF1E;
+    color: #FFF;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-top: 50px;
+    font-weight: bold;
+}
+.main-button i {
+    padding-right: 10px;
+    display: inline-block;
+}
+.main-button:hover {
+    text-decoration: none;
+    background: #BBB;
+}
+.courses-menu {
+    padding: 0px;
+    color: #333;
+}
+.courses-menu li {
+    display: inline-block;
+    list-style-type: none;
+    float: left;
+    width: 33%;
+    overflow: hidden;
+}
+.courses-menu li a {
+    padding: 15px;
+    display: block;
+    background: #CFD4DA;
+    color: #FFF;
+    margin-right: 1px;
+    font-weight: bold;
+}
+.courses-menu li a:hover,
+.courses-menu li.active a {
+    text-decoration: none;
+    background: #FDAF19;
+}
+.courses-menu li:last-child {
+    border-radius: 0px 6px 6px 0px;
+}
+.courses-menu li:first-child {
+    border-radius: 6px 0 0 6px;
+}
 .jumbotron {
     padding: 20px 0;
 }
@@ -237,4 +327,14 @@ span.slide b {
 }
 .res-msg {
     font-style: italic;
+}
+.bubble {
+    background: #FDAF19;
+    padding: 5px 10px;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    width: 60px;
+    display: inline-block;
 }
