@@ -15,7 +15,7 @@ angular.module('rezervoarApp')
             console.log('iz reservation servisa: startTime: ' + startTime);
             console.log('iz reservation servisa: endTime: ' + endTime);
             console.log('iz reservation servisa: level: ' + level);
-            //resDate = '20.04.2016';
+
             return $http({
                 method: 'POST',
                 url: routes.getAllTables,
@@ -30,7 +30,6 @@ angular.module('rezervoarApp')
 
         factory.getReservations = function(date) {
             console.log('iz reservation servisa: getReservations, date', date);
-            // ISPRAVI ZAKUCAN DATUM IZ RUTE
             return $http({
                 method: 'GET',
                 url: routes.getAll.replace(':date', date)

@@ -439,6 +439,13 @@ class LevelByLabel(APIView):
         level = LevelSerializer(level)
         return Response(level.data)
 
+# vraca postojece nivoe
+class Levels(APIView):
+    def get(self, request, format=None):
+        levels = Level.objects.all()
+        levels = LevelSerializer(levels, many=True)
+        print levels.data
+        return Response(levels.data)
 
 # vraca rezervaciju sa zadatim ID
 class ReservationById(APIView):

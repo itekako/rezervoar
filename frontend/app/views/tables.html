@@ -1,0 +1,10 @@
+<div data-ng-repeat="tab in tables | unique: 'label'">
+    <div id="{{tab.label}}-div" draggable-table on-resize="scaleIntervals($evt, $ui)" on-resizestop="saveDimensions($evt, $ui)" on-dragstop="savePosition($evt, $ui)"
+        style="position:absolute;left:{{tab.position.left}}px;top:{{tab.position.top}}px;height:{{tab.dimensions.height}}px;width:{{tab.dimensions.width}}px;">
+        <time-line id="{{tab.label}}-timeline" start-time="startTime" end-time="endTime" taken-intervals="tab.takenList" style="width:100%;"></time-line>
+        <aside id="{{tab.label}}" ng-class="{'taken': tab.taken}" style="width:100%;height:100%;">
+            <span>{{tab.label}}</span><br/>
+            <span><i class="glyphicon glyphicon-user"></i> {{tab.seats}}</span>
+        </aside>
+    </div>
+</div>

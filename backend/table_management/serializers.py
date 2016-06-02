@@ -26,7 +26,7 @@ class TableSerializer(serializers.ModelSerializer):
 class LevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Level
-        fields = ('id', 'label', 'scheme')
+        fields = ('id', 'label', 'schema')
 
 
 class ReservationSerializer(serializers.ModelSerializer):

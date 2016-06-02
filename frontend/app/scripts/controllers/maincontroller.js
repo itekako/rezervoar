@@ -8,10 +8,12 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-    .controller('MainController', ['$scope', '$rootScope', '$location', '$filter', 'AUTH_EVENTS',
-        'USER_ROLES', 'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
-        function ($scope, $rootScope, $location, $filter, AUTH_EVENTS, USER_ROLES, GuestFactory,
-        TableFactory, ReservationFactory, AuthenticationFactory) {
+    .controller('MainController', ['$scope', '$rootScope', '$location', '$filter',
+        '$timeout', '$compile', '$templateRequest', 'AUTH_EVENTS', 'USER_ROLES',
+        'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory', 'LevelFactory',
+        function ($scope, $rootScope, $location, $filter, $timeout, $compile,
+        $templateRequest, AUTH_EVENTS, USER_ROLES, GuestFactory, TableFactory,
+        ReservationFactory, AuthenticationFactory, LevelFactory) {
 
     $scope.currentUser = null;
     $scope.userRoles = USER_ROLES;
@@ -24,7 +26,6 @@ angular.module('rezervoarApp')
         $scope.currentUser = user;
     };
 
-
     $scope.logout = function () {
         console.log("scope.logout: currentUser: ", $scope.currentUser);
         AuthenticationFactory.logout();
@@ -33,6 +34,10 @@ angular.module('rezervoarApp')
         console.log("scope.logout: currentUser 2: ", $scope.currentUser);
         $location.path('/login');
     };
+
+    $scope.formatDateTime = function (format) {
+        return $filter('date')($scope.dt, format);
+    }
 
     $scope.getGuest = function () {
         GuestFactory.getGuest(4).then(function (response) {
@@ -44,11 +49,36 @@ angular.module('rezervoarApp')
         });
     };
 
+    $scope.getLevels = function() {
+        LevelFactory.getLevels().then(function (response) {
+            console.log('iz getLevels: data: ', JSON.stringify(response.data));
+            $scope.levels = response.data;
+            $scope.selectedLevelIndex = 0;
+            $scope.selectedLevel = $scope.levels[$scope.selectedLevelIndex];
+
+            $scope.startTime = $scope.slider.options.stepsArray[$scope.slider.minValue];
+            $scope.endTime = $scope.slider.options.stepsArray[$scope.slider.maxValue];
+
+            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
+
+            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+        }, function (response) {
+            console.log('getLevels error response: ', JSON.stringify(response));
+        });
+    };
+
     $scope.getTables = function (resDate, startTime, endTime, level) {
         ReservationFactory.getTables(resDate, startTime, endTime, level)
             .then(function (response) {
                 console.log('iz getTables: data: ', JSON.stringify(response.data));
                 $scope.tables = response.data.tables;
+
+                angular.element('#tables-div').scope().tables = $scope.tables;
+
+                $templateRequest("views/tables.html").then(function(html){
+                    var template = angular.element(html);
+                    angular.element(document.getElementById('tables-div')).html($compile(template)($scope));
+                });
             },
             function (response) {
                 console.log('getTables error response: ', JSON.stringify(response));
@@ -56,8 +86,9 @@ angular.module('rezervoarApp')
     };
 
     $scope.getReservations = function () {
-        var filterDateTime = $filter('date')($scope.dt, 'dd-MM-yyyy');
-        ReservationFactory.getReservations(filterDateTime)
+        var dateTime = $scope.formatDateTime('dd-MM-yyyy');
+
+        ReservationFactory.getReservations(dateTime)
             .then(function (response) {
                 console.log('iz getReservations: data.reservations: ', JSON.stringify(response.data.reservations));
                 $scope.reservations = response.data.reservations;
@@ -89,10 +120,9 @@ angular.module('rezervoarApp')
             $scope.startTime = this.stepsArray[$scope.slider.minValue];
             $scope.endTime = this.stepsArray[$scope.slider.maxValue];
 
-            var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
-            console.log("onchange datetime: ", filterDateTime);
+            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
 
-            $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
         }
       }
     };
@@ -105,8 +135,6 @@ angular.module('rezervoarApp')
     };
 
     $scope.savePosition = function(evt, ui) {
-        console.log("savePosition");
-
         for (var i in $scope.tables) {
             if ($scope.tables[i].label === ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-'))) {
                 $scope.tables[i].position.top = ui.position.top;
@@ -114,11 +142,11 @@ angular.module('rezervoarApp')
                 break;
             }
         }
+
+        console.log("iz savePosition: tables: ", $scope.tables);
     };
 
     $scope.saveDimensions = function(evt, ui) {
-        console.log("saveDimensions");
-
         for (var i in $scope.tables) {
             if ($scope.tables[i].label === ui.helper[0].id.substring(0, ui.helper[0].id.lastIndexOf('-'))) {
                 $scope.tables[i].dimensions.height = ui.size.height;
@@ -126,9 +154,11 @@ angular.module('rezervoarApp')
                 break;
             }
         }
+        console.log("iz saveDimensions: tables: ", $scope.tables);
     };
 
     $scope.saveLayout = function() {
+        console.log("iz saveLayout: tables: ", $scope.tables);
         TableFactory.updateTables($scope.tables).then(function(response) {
             console.log("saveLayout: success: response: ", response);
         }, function(response) {
@@ -151,20 +181,12 @@ angular.module('rezervoarApp')
     };
 
     $scope.dateOptions = {
-        dateDisabled: disabled,
         formatYear: 'yy',
         maxDate: new Date(2050, 5, 22),
         minDate: new Date(2016, 1, 1),
         startingDay: 1,
         showWeeks: false
     };
-
-    // Disable weekend selection
-    function disabled(data) {
-        var date = data.date,
-        mode = data.mode;
-        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    }
 
     $scope.toggleMin = function() {
         $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
@@ -224,23 +246,33 @@ angular.module('rezervoarApp')
 
     $scope.$watch('dt', function() {
 
-        var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
-        console.log("watch datetime: ", filterDateTime);
+        var dateTime = $scope.formatDateTime('dd.MM.yyyy');
 
-        $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
-        $scope.getReservations();
+        if ($scope.selectedLevel) {
+            console.log("iz watcha: if: label: ", $scope.selectedLevel.label);
+            console.log("iz watcha: if: dateTime: ", dateTime);
+            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.getReservations();
+        }
     });
 
-    $scope.initialize = function() {
-        $scope.today();
+    $scope.updateIndex = function (index) {
+        $scope.selectedLevelIndex = index;
+        $scope.selectedLevel = $scope.levels[$scope.selectedLevelIndex];
+        angular.element('#tables-div').scope().selectedLevel = $scope.selectedLevel;
 
         $scope.startTime = $scope.slider.options.stepsArray[$scope.slider.minValue];
         $scope.endTime = $scope.slider.options.stepsArray[$scope.slider.maxValue];
 
-        var filterDateTime = $filter('date')($scope.dt, 'dd.MM.yyyy');
-        console.log("initialize datetime: ", filterDateTime);
+        var dateTime = $scope.formatDateTime('dd.MM.yyyy');
 
-        $scope.getTables(filterDateTime, $scope.startTime, $scope.endTime, 'drugisprat');
+        $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+    };
+
+    $scope.initialize = function() {
+        $scope.today();
+
+        $scope.getLevels();
         $scope.getReservations();
     };
 

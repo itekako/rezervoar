@@ -45,7 +45,7 @@ class Reservation(models.Model):
 
 class Level(models.Model):
     label = models.CharField(max_length=128, unique=True)
-    scheme = models.CharField(max_length=128, unique=True)
+    schema = models.CharField(max_length=128, unique=True)
 
     def __unicode__(self):
         return self.label

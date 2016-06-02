@@ -11,7 +11,7 @@ class TableAdmin(admin.ModelAdmin):
 
 
 class LevelAdmin(admin.ModelAdmin):
-    list_display = ('label', 'scheme')
+    list_display = ('label', 'schema')
 
 
 class ReservationAdmin(admin.ModelAdmin):

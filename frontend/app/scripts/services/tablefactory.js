@@ -5,7 +5,7 @@ angular.module('rezervoarApp')
         var factory = {};
 
         var routes = {
-            get: 'http://api-rezervoar:8000/' + 'table_management/api/tables/:label',
+            get: 'http://api-rezervoar:8000/' + 'table_management/api/tables-per-level/:label',
             update: 'http://api-rezervoar:8000/' + 'table_management/api/tables/'
         };
 
@@ -13,7 +13,6 @@ angular.module('rezervoarApp')
             console.log('iz table servisa:');
             return $http({
                 method: 'GET',
-                //url: routes.get.replace(':label', label)
                 url: routes.get.replace(':label', tableLabel)
             });
         };

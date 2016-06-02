@@ -50,8 +50,9 @@
                     <div class="col-xs-12 col-sm-6">
                         <ul class="breadcrumb">
                             <li><a href="#">Biber</a></li>
-                            <li class="active"><a href="#">Prizemlje</a></li>
-                            <li><a href="#">Prvi sprat</a></li>
+                            <li data-ng-repeat="level in levels track by $index" ng-click="$parent.updateIndex($index)" data-ng-class="{'active' : $index == selectedLevelIndex, 'breadcrumb li a' : $index != selectedLevelIndex}">
+                                <a href="" >{{level.label | uppercase}}</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="col-xs-12 col-sm-6 text-right">
@@ -60,9 +61,6 @@
                 </div>
             </div>
         </section>
-<!-- <ng-view>
-
-</ng-view> -->
 
     <div ui-view></div>
 
@@ -116,6 +114,7 @@
         <script src="scripts/services/authenticationfactory.js"></script>
         <script src="scripts/services/authenticationinterceptor.js"></script>
         <script src="scripts/services/guestfactory.js"></script>
+        <script src="scripts/services/levelfactory.js"></script>
         <script src="scripts/services/reservationfactory.js"></script>
         <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/unique.js"></script>
