@@ -15,11 +15,14 @@ angular.module('rezervoarApp')
         $templateRequest, AUTH_EVENTS, USER_ROLES, GuestFactory, TableFactory,
         ReservationFactory, AuthenticationFactory, LevelFactory) {
 
-    $scope.currentUser = null;
+    // $scope.currentUser = null;
+    $scope.currentUser = 'mag';
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthenticationFactory.isAuthorized;
 
     $scope.location = $location.path();
+
+    //$scope.res = {};
 
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
@@ -90,6 +93,7 @@ angular.module('rezervoarApp')
 
         ReservationFactory.getReservations(dateTime)
             .then(function (response) {
+                console.log('iz getReservations: data: ', JSON.stringify(response.data));
                 console.log('iz getReservations: data.reservations: ', JSON.stringify(response.data.reservations));
                 $scope.reservations = response.data.reservations;
                 for (var i in $scope.reservations) {
@@ -267,6 +271,24 @@ angular.module('rezervoarApp')
         var dateTime = $scope.formatDateTime('dd.MM.yyyy');
 
         $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+    };
+
+    $scope.addReservation = function () {
+        console.log("iz addReservation: currentUser: ", $scope.currentUser);
+        $scope.res.loggedUser = $scope.currentUser;
+        $scope.res.date = $scope.formatDateTime('d.M.yyyy');
+        console.log("reservation podaci: ", JSON.stringify($scope.res));
+
+        ReservationFactory.addReservation($scope.res).then(function (response) {
+            console.log("iz addReservation: data: ", JSON.stringify(response.data));
+
+            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
+
+            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.getReservations();
+        }, function (response) {
+            console.log("addReservation error: response: ", JSON.stringify(response));
+        });
     };
 
     $scope.initialize = function() {

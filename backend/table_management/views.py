@@ -172,11 +172,12 @@ def updateOriginal(originalReservation):
     return updatedOriginal
 
 
-def makeGuest(firstName, lastName, phoneNumber):
+def makeGuest(firstName, lastName, phoneNumber, email):
     newGuest = {}
     newGuest['first_name'] = firstName
     newGuest['last_name'] = lastName
     newGuest['phone_number'] = phoneNumber
+    newGuest['email'] = email
     return newGuest
 
 
@@ -204,6 +205,7 @@ def addFreeTables(allTables, lista, result):
 
 
 def addTakenTables(reservations, level, lista, startOriginal, endOriginal, result):
+    local_timezone = pytz.timezone('Europe/Belgrade')
     for reservation in reservations:
         # ako rezervacija nije validna, ili je otkazana preskacemo je
         if (reservation.valid == 0 or reservation.canceled == 1):
@@ -216,8 +218,8 @@ def addTakenTables(reservations, level, lista, startOriginal, endOriginal, resul
             # da li se sto nalazi na trazenom spratu
             if str(tableByLabel.level) == str(level):
                 listElement = {}
-                listElement['startDate'] = reservation.start_date.strftime("%d.%m.%Y %H:%M")
-                listElement['endDate'] = reservation.end_date.strftime("%d.%m.%Y %H:%M")
+                listElement['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
+                listElement['endDate'] = reservation.end_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
                 tmp = next((item for item in lista if str(item["label"]) == str(tableLabel)), None)
                 # da li se sto vec nalazi u listi
                 if tmp is None:
@@ -281,14 +283,16 @@ class Reservations(APIView):
     def get(self, request, date, format=None):
         print "REZERVACIJE PO DATUMU"
         date = datetime.strptime(str(date), "%d-%m-%Y").date()
+        local_timezone = pytz.timezone('Europe/Belgrade')
         reservations = Reservation.objects.all()
         result = {}
         result['reservations'] = []
         for reservation in reservations:
             if (reservation.start_date.date() == date):
                 insertData = {}
-                insertData['startDate'] = reservation.start_date.strftime("%d.%m.%Y %H:%M")
-                insertData['endDate'] = reservation.end_date.strftime("%d.%m.%Y %H:%M")
+                insertData['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
+                insertData['endDate'] = reservation.end_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
+
                 insertData['tables'] = []
                 for table in reservation.tables.split(','):
                     table = table.strip()
@@ -314,9 +318,10 @@ class Reservations(APIView):
         firstName = data.get('firstName')
         lastName = data['lastName']
         phoneNumber = data['phoneNumber']
+        email = data['email']
         guest = Guest.objects.filter(first_name=firstName).filter(last_name=lastName).filter(phone_number=phoneNumber)
         if not guest:
-            newGuest = makeGuest(firstName, lastName, phoneNumber)
+            newGuest = makeGuest(firstName, lastName, phoneNumber, email)
             newGuest = GuestSerializer(data=newGuest)
             if newGuest.is_valid() is False:
                 return Response(newGuest.errors)
