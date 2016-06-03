@@ -18,6 +18,15 @@
             <span class="slide" id="collapse{{$index}}">
                 <b>E-mail: {{res.email}}</b>
                 <b>Telefon: {{res.phoneNumber}}</b>
+                <!-- <a class="btn btn-default" style="margin-right:6px;" href="#/home/" ui-sref="home.reservations">Otkaži</a> -->
+                <span>
+                    <a style="" href="#/home/" ui-sref="home.editreservation({ id: res.id })">
+                        <button type="submit" class="btn btn-primary" ng-click="$parent.editReservation($index)">Izmeni</button>
+                    </a>
+                    <a style="" href="#/home/" ui-sref="home.reservations">
+                        <button type="submit" class="btn btn-primary" ng-click="$parent.cancelReservation()">Otkaži</button>
+                    </a>
+                </span>
             </span>
     </li>
 </ul>

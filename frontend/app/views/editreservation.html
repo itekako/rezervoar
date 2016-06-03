@@ -1,1 +1,61 @@
-<p> Hej iz EditReservation! </p>
+<div id="edit-res-div" class="container">
+    <form role="form" class="new-reservation">
+        <div class="form-group">
+            <input type="text" class="form-control" data-ng-model="$parent.res.firstName" required id="name" placeholder="Ime">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" data-ng-model="$parent.res.lastName" required id="lastName" placeholder="Prezime">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" data-ng-model="$parent.res.phoneNumber" required id="phoneNumber" placeholder="Broj telefona">
+        </div>
+        <div class="form-group">
+            <input type="email" class="form-control" data-ng-model="$parent.res.email" id="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <select class="form-control" data-ng-model="$parent.res.numberOfGuests" required>
+                <option value="" disabled selected class="form-placeholder">Broj osoba</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <span style="margin-right:5px;">
+                <label for="from" style="text-align:left;">OD</label>
+                <select class="form-control" data-ng-model="$parent.res.startTime" required style="display:inline-block;width:30%;margin-left:4px;">
+                    <option>14:00</option>
+                    <option>17:30</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </span>
+            <span style="margin-left:5px">
+                <label for="to" style="text-align:left;">DO</label>
+                <select class="form-control" data-ng-model="$parent.res.endTime" required style="display:inline-block;width:30%;">
+                    <option>16:00</option>
+                    <option>19:00</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </span>
+        </div>
+        <div class="form-group" style="text-align:left;">
+            <label for="from">STO</label>
+            <input type="text" class="form-control" data-ng-model="$parent.res.tables" required id="tables" placeholder="Sto">
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" rows="3" data-ng-model="$parent.res.comment" placeholder="Komentar"></textarea>
+        </div>
+        <a class="btn btn-default" style="margin-right:6px;" href="#/home/" ui-sref="home.reservations">Otkaži</a>
+        <a style="margin-right:6px;" href="#/home/" ui-sref="home.reservations">
+            <button type="submit" class="btn btn-primary" ng-click="$parent.addReservation()">Sačuvaj</button>
+        </a>
+    </form>
+</div>

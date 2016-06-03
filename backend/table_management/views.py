@@ -290,6 +290,7 @@ class Reservations(APIView):
         for reservation in reservations:
             if (reservation.start_date.date() == date):
                 insertData = {}
+                insertData['id'] = reservation.id
                 insertData['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
                 insertData['endDate'] = reservation.end_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
 
@@ -462,5 +463,9 @@ class ReservationById(APIView):
 
     def get(self, request, pk, format=None):
         reservation = self.get_object(pk)
-        reservation = ReservationSerializer(reservation)
-        return Response(reservation.data)
+        serialized_res = serializers.serialize('json', [reservation,])
+        struct = json.loads(serialized_res)
+        res = struct[0]
+        res['fields']['firstName'] = reservation.id_guest.first_name
+        res['fields']['lastName'] = reservation.id_guest.last_name
+        return Response(res)

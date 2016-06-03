@@ -22,8 +22,6 @@ angular.module('rezervoarApp')
 
     $scope.location = $location.path();
 
-    //$scope.res = {};
-
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
@@ -93,7 +91,6 @@ angular.module('rezervoarApp')
 
         ReservationFactory.getReservations(dateTime)
             .then(function (response) {
-                console.log('iz getReservations: data: ', JSON.stringify(response.data));
                 console.log('iz getReservations: data.reservations: ', JSON.stringify(response.data.reservations));
                 $scope.reservations = response.data.reservations;
                 for (var i in $scope.reservations) {
@@ -289,6 +286,21 @@ angular.module('rezervoarApp')
         }, function (response) {
             console.log("addReservation error: response: ", JSON.stringify(response));
         });
+    };
+
+    $scope.editReservation = function (index) {
+        var res = $scope.reservations[index];
+        ReservationFactory.getReservationById(res.id).then(function (response) {
+            console.log("iz editReservation: data: ", JSON.stringify(response.data));
+
+            angular.element('#edit-res-div').scope().reservation = response.data;
+        }, function (response) {
+            console.log("editReservation error: response: ", JSON.stringify(response));
+        });
+    };
+
+    $scope.cancelReservation = function () {
+
     };
 
     $scope.initialize = function() {

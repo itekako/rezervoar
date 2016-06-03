@@ -55,7 +55,10 @@ angular
             })
             .state('home.editreservation', {
                 url: '/editreservation/:id',
-                templateUrl: 'views/editreservation.html'
+                templateUrl: 'views/editreservation.html',
+                params: {
+                    reservation: null
+                }
             });
     });
 

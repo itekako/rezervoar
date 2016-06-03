@@ -7,6 +7,7 @@ angular.module('rezervoarApp')
         var routes = {
             getAll: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/:date',
             getAllTables: 'http://api-rezervoar:8000/' + 'table_management/api/tables/',
+            getById: 'http://api-rezervoar:8000/' + 'table_management/api/reservation/:id',
             add: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/'
         };
 
@@ -34,6 +35,14 @@ angular.module('rezervoarApp')
             return $http({
                 method: 'GET',
                 url: routes.getAll.replace(':date', date)
+            });
+        };
+
+        factory.getReservationById = function(id) {
+            console.log('iz reservation servisa: getReservationById, id', id);
+            return $http({
+                method: 'GET',
+                url: routes.getById.replace(':id', id)
             });
         };
 
