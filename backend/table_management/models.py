@@ -5,7 +5,7 @@ from datetime import datetime
 from django.template.defaultfilters import slugify
 
 
-class Restorant(models.Model):
+class Restaurant(models.Model):
     title = models.CharField(max_length=128, blank=False)
     opening_time = models.TimeField(blank=False)
     closing_time = models.TimeField(blank=False)

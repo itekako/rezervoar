@@ -9,9 +9,9 @@ import pytz
 from django.core import serializers
 from django.contrib.auth.models import User
 
-from table_management.models import Guest, Table, Level, Reservation
+from table_management.models import Guest, Table, Level, Reservation, Restaurant
 from table_management.serializers import GuestSerializer, TableSerializer,\
-    LevelSerializer, ReservationSerializer, UserSerializer
+    LevelSerializer, ReservationSerializer, UserSerializer, RestaurantSerializer
 
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -128,6 +128,7 @@ def makeUpdatedReservation(data, originalReservation):
         newReservation['start_date'] = start_d
     else:
         newReservation['start_date'] = originalReservation.start_date
+
     if (data.get('endDate') != ''):
         end_d = datetime.strptime(data.get('endDate'), "%d.%m.%Y %H:%M")
         localtz = timezone('Europe/Belgrade')
@@ -140,27 +141,25 @@ def makeUpdatedReservation(data, originalReservation):
     else:
         newReservation['tables'] = originalReservation.tables
     if (data.get('numberOfGuests') != ''):
-        newReservation['number_of_guests'] = data.get('numberOfGuests')
+        newReservation['number_of_guests'] = data.get('number_of_guests')
     else:
         newReservation['number_of_guests'] = originalReservation.number_of_guests
     # proveravamo da li postoji user koij menja rezervaciju u bazi
-    username = data.get('username')
-    if username != '':
-        user = User.objects.filter(username=username)
-        if not user:
-            answer = {'error': 'User with that username not found'}
-            return Response(answer)
-        else:
-            user = user[0]
-        newReservation['id_user'] = user.id
-    else:
-        newReservation['id_user'] = originalReservation.id_user.id
+    user = User.objects.get(id=data.get('id_user'))
+    if not user:
+        answer = {'error': 'User not found'}
+        return Response(answer)
+
+    newReservation['id_user'] = user.id
+
     if (data.get('comment') != ''):
         newReservation['comment'] = data.get('comment')
     else:
         newReservation['comment'] = originalReservation.comment
+
     newReservation['valid'] = 1
     newReservation['canceled'] = 0
+
     return newReservation
 
 
@@ -169,6 +168,7 @@ def updateOriginal(originalReservation):
     updatedOriginal['valid'] = 0
     updatedOriginal['id_user'] = originalReservation.id_user.id
     updatedOriginal['id_guest'] = originalReservation.id_guest.id
+
     return updatedOriginal
 
 
@@ -245,7 +245,6 @@ def addTakenTables(reservations, level, lista, startOriginal, endOriginal, resul
                         insertData['taken'] = True
                     else:
                         insertData['taken'] = False
-                    print insertData
                     result['tables'].append(insertData)
                 # ukoliko se vec nalazi, samo dodajemo u takenList
                 else:
@@ -288,7 +287,7 @@ class Reservations(APIView):
         result = {}
         result['reservations'] = []
         for reservation in reservations:
-            if (reservation.start_date.date() == date):
+            if (reservation.start_date.date() == date and reservation.valid != 0):
                 insertData = {}
                 insertData['id'] = reservation.id
                 insertData['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
@@ -320,38 +319,28 @@ class Reservations(APIView):
         lastName = data['lastName']
         phoneNumber = data['phoneNumber']
         email = data['email']
-        guest = Guest.objects.filter(first_name=firstName).filter(last_name=lastName).filter(phone_number=phoneNumber)
-        if not guest:
-            newGuest = makeGuest(firstName, lastName, phoneNumber, email)
-            newGuest = GuestSerializer(data=newGuest)
-            if newGuest.is_valid() is False:
-                return Response(newGuest.errors)
-            else:
-                guest = newGuest.save()
-        else:
-            guest = guest[0]
-        # proveravamo da li postoji takav user u bazi
-        user = User.objects.filter(username=data.get('username'))
-        if not user:
-            answer = {'error': 'User with that username not found'}
-            return Response(answer)
-        else:
-            user = user[0]
-        # dodajemo novu rezervaciju
+
+        guest = findGuestByName(firstName, lastName, phoneNumber, email)
+        user = findUserByUsername(data.get('username'))
+
         newReservation = makeReservation(start_d, end_d, guest, data['tables'], data['numberOfGuests'], user, data['comment'])
         newReservation = ReservationSerializer(data=newReservation)
         if newReservation.is_valid() is False:
             return Response(newReservation.errors)
         else:
             newReservation.save()
-        return Response(request.data)
+
+        return Response(newReservation.data)
 
 
 # menja vec postojecu rezervaciju
     def put(self, request, format=None):
         data = request.data
         # nalazimo originalnu rezervaciju
-        idOriginal = int(data.get('idOriginal'))
+        if data.get('idOriginal') is None:
+            idOriginal = int(data.get('id'))
+        else:
+            idOriginal = int(data.get('idOriginal'))
         originalReservation = Reservation.objects.get(pk=idOriginal)
         # dodajemo novu rezervaciju
         newReservation = makeUpdatedReservation(data, originalReservation)
@@ -367,6 +356,7 @@ class Reservations(APIView):
             return Response(updatedOriginal.errors)
         else:
             updatedOriginal.save()
+
         return Response(request.data)
 
 
@@ -450,7 +440,7 @@ class Levels(APIView):
     def get(self, request, format=None):
         levels = Level.objects.all()
         levels = LevelSerializer(levels, many=True)
-        print levels.data
+
         return Response(levels.data)
 
 # vraca rezervaciju sa zadatim ID
@@ -465,7 +455,45 @@ class ReservationById(APIView):
         reservation = self.get_object(pk)
         serialized_res = serializers.serialize('json', [reservation,])
         struct = json.loads(serialized_res)
-        res = struct[0]
-        res['fields']['firstName'] = reservation.id_guest.first_name
-        res['fields']['lastName'] = reservation.id_guest.last_name
+        res = struct[0]['fields']
+
+        guest = Guest.objects.get(pk=res['id_guest'])
+
+        res['firstName'] = guest.first_name
+        res['lastName'] = guest.last_name
+        res['phoneNumber'] = guest.phone_number
+        res['email'] = guest.email
+
+        local_timezone = pytz.timezone('Europe/Belgrade')
+        res['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
+        res['endDate'] = reservation.end_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")
+        res['id'] = reservation.id
+
         return Response(res)
+
+class Restaurants(APIView):
+    def get(self, request, format=None):
+        restaurant = Restaurant.objects.get(title='Rezervoar')
+        restaurant = RestaurantSerializer(restaurant)
+        return Response(restaurant.data)
+
+def findGuestByName(firstName, lastName, phoneNumber, email):
+    guest = Guest.objects.filter(first_name=firstName).filter(last_name=lastName).filter(phone_number=phoneNumber)
+    if not guest:
+        newGuest = makeGuest(firstName, lastName, phoneNumber, email)
+        newGuest = GuestSerializer(data=newGuest)
+        if newGuest.is_valid() is False:
+            return Response(newGuest.errors)
+        else:
+            guest = newGuest.save()
+            return guest
+    else:
+        return guest[0]
+
+def findUserByUsername(username):
+    user = User.objects.filter(username=username)
+    if not user:
+        answer = {'error': 'User with that username not found'}
+        return Response(answer)
+    else:
+        return user[0]

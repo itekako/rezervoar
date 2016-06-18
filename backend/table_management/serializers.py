@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from table_management.models import Guest, Table, Level, Reservation
+from table_management.models import Guest, Table, Level, Reservation, Restaurant
 from django.contrib.auth.models import User
+
+class RestaurantSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Restaurant
+        fields = ('__all__')
 
 
 class UserSerializer(serializers.ModelSerializer):

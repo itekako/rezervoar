@@ -21,4 +21,6 @@ urlpatterns = patterns(
     url(r'^api/cancel-reservation/$', views.CancelReservation.as_view()),
     # LOGIN
     url(r'^api/authentication/$', views.Authentication.as_view()),
+    # RESTORAN
+    url(r'^api/restaurant/$', views.Restaurants.as_view()),
     )

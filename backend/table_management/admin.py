@@ -1,5 +1,5 @@
 from django.contrib import admin
-from table_management.models import Table, Level, Guest, Reservation, Restorant
+from table_management.models import Table, Level, Guest, Reservation, Restaurant
 
 
 class GuestAdmin(admin.ModelAdmin):
@@ -20,7 +20,7 @@ class ReservationAdmin(admin.ModelAdmin):
 # class LevelAdmin(admin.ModelAdmin):
 #     prepopulated_fields = {'slug': ('label',)}
 
-admin.site.register(Restorant)
+admin.site.register(Restaurant)
 admin.site.register(Table, TableAdmin)
 admin.site.register(Level, LevelAdmin)
 admin.site.register(Guest, GuestAdmin)
