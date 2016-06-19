@@ -107,7 +107,7 @@ def makeReservation(start_d, end_d, guest, tables, numberOfGuests, user, comment
     newReservation['start_date'] = start_d
     newReservation['end_date'] = end_d
     newReservation['id_guest'] = guest.id
-    newReservation['tables'] = tables
+    newReservation['tables'] = ','.join(tables)
     newReservation['number_of_guests'] = numberOfGuests
     newReservation['id_original'] = None
     newReservation['id_user'] = user.id
@@ -136,8 +136,9 @@ def makeUpdatedReservation(data, originalReservation):
         newReservation['end_date'] = end_d
     else:
         newReservation['end_date'] = originalReservation.end_date
-    if (data.get('tables') != ''):
-        newReservation['tables'] = data.get('tables')
+    tables = ','.join(data.get('tables'))
+    if (tables != ''):
+        newReservation['tables'] = tables
     else:
         newReservation['tables'] = originalReservation.tables
     if (data.get('numberOfGuests') != ''):

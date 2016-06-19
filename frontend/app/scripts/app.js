@@ -18,7 +18,8 @@ angular
         'ngTouch',
         'rzModule',
         'ui.bootstrap',
-        'ui.router'
+        'ui.router',
+        'ngTagsInput'
     ])
     .constant('AUTH_EVENTS', {
         loginSuccess: 'auth-login-success',

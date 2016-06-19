@@ -23,6 +23,10 @@ angular.module('rezervoarApp')
 
     $scope.location = $location.path();
 
+    $scope.loadTags = function(query) {
+        return $scope.tables;
+    };
+
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
@@ -76,6 +80,11 @@ angular.module('rezervoarApp')
                 $scope.tables = response.data.tables;
 
                 angular.element('#tables-div').scope().tables = $scope.tables;
+
+                // potrebno svojstvo 'text' zbog ngTagsInput direktive
+                for (var i in $scope.tables) {
+                    $scope.tables[i].text = $scope.tables[i].label;
+                }
 
                 $templateRequest("views/tables.html").then(function(html){
                     var template = angular.element(html);
@@ -387,6 +396,11 @@ angular.module('rezervoarApp')
         $scope.res.loggedUser = 'mag';
         $scope.res.date = $scope.formatDateTime('d.M.yyyy');
         $scope.res.numberOfGuests = $scope.res.number_of_guests;
+
+        for (var i in $scope.res.tables) {
+            $scope.res.tables[i] = $scope.res.tables[i].label;
+        }
+
         console.log("reservation podaci: ", JSON.stringify($scope.res));
 
         ReservationFactory.addReservation($scope.res).then(function (response) {
@@ -395,6 +409,7 @@ angular.module('rezervoarApp')
             var dateTime = $scope.formatDateTime('dd.MM.yyyy');
 
             $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.res = {};
             $scope.getReservations();
         }, function (response) {
             console.log("addReservation error: response: ", JSON.stringify(response));
@@ -410,6 +425,13 @@ angular.module('rezervoarApp')
             $scope.res = response.data;
             $scope.res.startTime = $scope.res.startDate.split(' ')[1];
             $scope.res.endTime = $scope.res.endDate.split(' ')[1];
+
+            var tables = $scope.res.tables.split(',');
+            $scope.res.tables = [];
+            for (var i in tables) {
+                $scope.res.tables[i] = {};
+                $scope.res.tables[i].text = tables[i];
+            }
             console.log("iz getReservation: $scope.res: ", JSON.stringify($scope.res));
         }, function (response) {
             console.log("getReservation error: response: ", JSON.stringify(response));
@@ -423,6 +445,12 @@ angular.module('rezervoarApp')
         var endDt = $scope.res.endDate.split(' ');
         endDt[1] = $scope.res.endTime;
         $scope.res.endDate = endDt[0] + ' ' + endDt[1];
+
+        var tables = $scope.res.tables;
+        $scope.res.tables = [];
+        for (var i in tables) {
+            $scope.res.tables.push(tables[i].label);
+        }
 
         console.log("iz editReservation: scope.res: ", JSON.stringify($scope.res));
         ReservationFactory.editReservation($scope.res).then(function (response) {
