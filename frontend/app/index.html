@@ -38,9 +38,9 @@
                 <div data-ng-if="loginSuccess" id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="./">Rezervacije <span class="sr-only">(current)</span></a></li>
-                        <li><a href="../navbar-static-top/">Setup</a></li>
+                        <li ng-if="currentUser.userRole == 'Admin'"><a href="http://localhost:8000/admin/">Setup</a></li>
                         <li ng-if="currentUser"><a href data-ng-click="logout()">Odjavi se</a></li>
-                        <li ng-if="currentUser"><a href="../navbar-fixed-top/">{{ currentUser }}</a></li>
+                        <li ng-if="currentUser.username"><a href="">{{ currentUser.username }}</a></li>
                     </ul>
                 </div>
             </div>

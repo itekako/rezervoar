@@ -33,7 +33,7 @@ angular.module('rezervoarApp')
             } else {
                 $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
                 console.log("LoginController: login: uspelo", response.data);
-                $scope.setCurrentUser(response.data.username);
+                $scope.setCurrentUser(response.data);
                 $scope.loginError = null;
                 $state.go('home.reservations');
             }

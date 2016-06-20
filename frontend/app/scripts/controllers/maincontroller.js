@@ -26,7 +26,9 @@ angular.module('rezervoarApp')
 
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
-        $scope.currentUser = user;
+        $scope.currentUser = {};
+        $scope.currentUser.username = user.username;
+        $scope.currentUser.userRole = user.groups[0].name || null;
         $scope.getLevels();
     };
 
