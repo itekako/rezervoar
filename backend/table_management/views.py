@@ -28,8 +28,11 @@ class Authentication(APIView):
             # the password verified for the user
             if user.is_active:
                 print("User is valid, active and authenticated")
-                user = UserSerializer(user)
-                return Response(user.data)
+                answer = {}
+                answer['id'] = user.id
+                answer['username'] = user.username
+                answer['groups'] = user.groups.values()
+                return Response(answer)
             else:
                 answer = {'error': 'The password is valid, but the account has been disabled!'}
                 print("The password is valid, but the account has been disabled!")

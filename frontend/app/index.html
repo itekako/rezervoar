@@ -35,14 +35,14 @@
                         <img src="images/logo-rezervoar.png" alt="Logo Rezervoar"/>
                     </a>
                 </div>
-                <div id="navbar" class="navbar-collapse collapse">
+                <div data-ng-if="loginSuccess" id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="./">Rezervacije <span class="sr-only">(current)</span></a></li>
                         <li><a href="../navbar-static-top/">Setup</a></li>
                         <li ng-if="currentUser"><a href data-ng-click="logout()">Odjavi se</a></li>
                         <li ng-if="currentUser"><a href="../navbar-fixed-top/">{{ currentUser }}</a></li>
                     </ul>
-                </div><!--/.navbar-collapse -->
+                </div>
             </div>
         </nav>
         <section class="breadcrumb-custom">
@@ -51,12 +51,14 @@
                     <div class="col-xs-12 col-sm-6">
                         <ul class="breadcrumb">
                             <li><a href="#">Biber</a></li>
-                            <li data-ng-repeat="level in levels track by $index" ng-click="$parent.updateIndex($index)" data-ng-class="{'active' : $index == selectedLevelIndex, 'breadcrumb li a' : $index != selectedLevelIndex}">
+                            <li data-ng-if="loginSuccess" data-ng-repeat="level in levels track by $index"
+                                ng-click="$parent.updateIndex($index)"
+                                data-ng-class="{'active' : $index == selectedLevelIndex, 'breadcrumb li a' : $index != selectedLevelIndex}">
                                 <a href="" >{{level.label | uppercase}}</a>
                             </li>
                         </ul>
                     </div>
-                    <div class="col-xs-12 col-sm-6 text-right">
+                    <div data-ng-if="loginSuccess" class="col-xs-12 col-sm-6 text-right">
                         <a class="main-button" href="#/home/newreservation" ui-sref="home.newreservation"><i class="glyphicon glyphicon-plus"></i>NOVA REZERVACIJA</a>
                     </div>
                 </div>
@@ -114,11 +116,12 @@
         <script src="scripts/directives/draggabletable.js"></script>
         <script src="scripts/directives/timeline.js"></script>
         <script src="scripts/services/authenticationfactory.js"></script>
-        <script src="scripts/services/authenticationinterceptor.js"></script>
+        <script src="scripts/services/authinterceptorfactory.js"></script>
         <script src="scripts/services/guestfactory.js"></script>
         <script src="scripts/services/levelfactory.js"></script>
         <script src="scripts/services/reservationfactory.js"></script>
         <script src="scripts/services/restaurantfactory.js"></script>
+        <script src="scripts/services/sessionservice.js"></script>
         <script src="scripts/services/tablefactory.js"></script>
         <script src="scripts/unique.js"></script>
 

@@ -8,20 +8,18 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-    .controller('MainController', ['$scope', '$rootScope', '$location', '$filter',
+    .controller('MainController', ['$scope', '$rootScope', '$filter',
         '$timeout', '$compile', '$templateRequest', 'AUTH_EVENTS', 'USER_ROLES',
         'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
         'LevelFactory', 'RestaurantFactory',
-        function ($scope, $rootScope, $location, $filter, $timeout, $compile,
+        function ($scope, $rootScope, $filter, $timeout, $compile,
         $templateRequest, AUTH_EVENTS, USER_ROLES, GuestFactory, TableFactory,
         ReservationFactory, AuthenticationFactory, LevelFactory, RestaurantFactory) {
 
-    // $scope.currentUser = null;
-    $scope.currentUser = 'mag';
+    $rootScope.loginSuccess = false;
+    $scope.currentUser = null;
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthenticationFactory.isAuthorized;
-
-    $scope.location = $location.path();
 
     $scope.loadTags = function(query) {
         return $scope.tables;
@@ -38,7 +36,7 @@ angular.module('rezervoarApp')
         $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
         $scope.currentUser = null;
         console.log("scope.logout: currentUser 2: ", $scope.currentUser);
-        $location.path('/login');
+        $state.go('login');
     };
 
     $scope.formatDateTime = function (format) {
