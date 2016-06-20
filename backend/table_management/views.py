@@ -291,7 +291,7 @@ class Reservations(APIView):
         result = {}
         result['reservations'] = []
         for reservation in reservations:
-            if (reservation.start_date.date() == date and reservation.valid != 0):
+            if (reservation.start_date.date() == date and reservation.valid != 0 and reservation.canceled != 1):
                 insertData = {}
                 insertData['id'] = reservation.id
                 insertData['startDate'] = reservation.start_date.replace(tzinfo=pytz.utc).astimezone(local_timezone).strftime("%d.%m.%Y %H:%M")

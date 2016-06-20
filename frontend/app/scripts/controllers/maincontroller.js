@@ -449,9 +449,25 @@ angular.module('rezervoarApp')
         });
     };
 
-    $scope.cancelReservation = function () {
+    $scope.cancelReservation = function (index) {
+        var confirmed = $scope.confirmCanceling();
+        if (confirmed) {
+            var res = $scope.reservations[index];
+            console.log("iz cancelReservation: res: ", JSON.stringify(res));
+            ReservationFactory.cancelReservation(res.id).then(function (response) {
+                console.log("iz cancelReservation: data: ", JSON.stringify(response.data));
 
-        $scope.res = {};
+                $scope.res = {};
+                $scope.getReservations();
+            }, function (response) {
+                console.log("cancelReservation error: response: ", JSON.stringify(response));
+            });            
+        }
+    };
+
+    $scope.confirmCanceling = function () {
+        var msg = 'Da li zaista želite da otkažete rezervaciju?';
+        return window.confirm(msg);
     };
 
     $scope.initialize = function() {

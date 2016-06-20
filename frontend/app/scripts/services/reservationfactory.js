@@ -9,7 +9,8 @@ angular.module('rezervoarApp')
             getAllTables: 'http://api-rezervoar:8000/' + 'table_management/api/tables/',
             getById: 'http://api-rezervoar:8000/' + 'table_management/api/reservation/:id',
             add: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/',
-            edit: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/'
+            edit: 'http://api-rezervoar:8000/' + 'table_management/api/reservations/',
+            cancel: 'http://api-rezervoar:8000/' + 'table_management/api/cancel-reservation/'
         };
 
         factory.getTables = function(resDate, startTime, endTime, level) {
@@ -76,6 +77,16 @@ angular.module('rezervoarApp')
                 method: 'PUT',
                 url: routes.edit,
                 data: reservation
+            });
+        };
+
+        factory.cancelReservation = function(reservationId) {
+            console.log('iz reservation servisa: cancelReservation: reservationId: ', JSON.stringify(reservationId));
+
+            return $http({
+                method: 'PUT',
+                url: routes.cancel,
+                data: {idOriginal: reservationId}
             });
         };
 

@@ -25,7 +25,6 @@ angular
         loginSuccess: 'auth-login-success',
         loginFailed: 'auth-login-failed',
         logoutSuccess: 'auth-logout-success',
-        //sessionTimeout: 'auth-session-timeout',
         notAuthenticated: 'auth-not-authenticated',
         notAuthorized: 'auth-not-authorized'
     })
@@ -87,19 +86,13 @@ angular
     })
     .run(function ($rootScope, AUTH_EVENTS, AuthenticationFactory) {
         $rootScope.$on('$stateChangeStart', function (event, next) {
-            if (next) {
-                console.log("next je ok", JSON.stringify(next));
-            }
             var authorizedRoles = next.data.authorizedRoles;
             if (authorizedRoles.indexOf('*') === -1 && !AuthenticationFactory.isAuthorized(authorizedRoles)) {
                 event.preventDefault();
-                console.log("IZ RUNA");
                 if (AuthenticationFactory.isAuthenticated()) {
                     // user is not allowed
-                    console.log("PRVI IF");
                     $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
                 } else {
-                    console.log("DRUGI IF");
                     // user is not logged in
                     $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
                 }
