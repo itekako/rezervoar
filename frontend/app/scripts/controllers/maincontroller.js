@@ -8,15 +8,14 @@
  * Controller of the rezervoarApp
  */
 angular.module('rezervoarApp')
-    .controller('MainController', ['$scope', '$rootScope', '$filter',
+    .controller('MainController', ['$scope', '$rootScope', '$filter', '$state',
         '$timeout', '$compile', '$templateRequest', 'AUTH_EVENTS', 'USER_ROLES',
         'GuestFactory', 'TableFactory', 'ReservationFactory', 'AuthenticationFactory',
         'LevelFactory', 'RestaurantFactory',
-        function ($scope, $rootScope, $filter, $timeout, $compile,
+        function ($scope, $rootScope, $filter, $state, $timeout, $compile,
         $templateRequest, AUTH_EVENTS, USER_ROLES, GuestFactory, TableFactory,
         ReservationFactory, AuthenticationFactory, LevelFactory, RestaurantFactory) {
 
-    $rootScope.loginSuccess = false;
     $scope.currentUser = null;
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthenticationFactory.isAuthorized;
@@ -28,6 +27,7 @@ angular.module('rezervoarApp')
     $scope.setCurrentUser = function (user) {
         console.log("scope.setCurrentUser: user: ", user);
         $scope.currentUser = user;
+        $scope.getLevels();
     };
 
     $scope.logout = function () {
@@ -35,6 +35,7 @@ angular.module('rezervoarApp')
         AuthenticationFactory.logout();
         $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
         $scope.currentUser = null;
+        $rootScope.loginSuccess = false;
         console.log("scope.logout: currentUser 2: ", $scope.currentUser);
         $state.go('login');
     };
@@ -59,20 +60,21 @@ angular.module('rezervoarApp')
             $scope.levels = response.data;
             $scope.selectedLevelIndex = 0;
             $scope.selectedLevel = $scope.levels[$scope.selectedLevelIndex];
-
-            $scope.startTime = $scope.slider.minValue;
-            $scope.endTime = $scope.slider.maxValue;
-
-            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
-
-            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
         }, function (response) {
             console.log('getLevels error response: ', JSON.stringify(response));
         });
     };
 
-    $scope.getTables = function (resDate, startTime, endTime, level) {
-        ReservationFactory.getTables(resDate, startTime, endTime, level)
+    $scope.getTables = function () {
+        var dateTime = $scope.formatDateTime('dd.MM.yyyy');
+        var startTime = $scope.slider.minValue;
+        var endTime = $scope.slider.maxValue;
+        var level = $scope.selectedLevel.label;
+
+        $scope.startTime = startTime;
+        $scope.endTime = endTime;
+
+        ReservationFactory.getTables(dateTime, startTime, endTime, level)
             .then(function (response) {
                 console.log('iz getTables: data: ', JSON.stringify(response.data));
                 $scope.tables = response.data.tables;
@@ -222,7 +224,7 @@ angular.module('rezervoarApp')
             $scope.slider.minValue = steps[9];
             $scope.slider.maxValue = steps[13];
 
-            $scope.getLevels();
+            $scope.getTables();
 
         }, function (response) {
             console.log('getWorkingHours error response: ', JSON.stringify(response));
@@ -238,12 +240,7 @@ angular.module('rezervoarApp')
             return this.stepsArray[v].value;
         },
         onChange: function () {
-            $scope.startTime = $scope.slider.minValue;
-            $scope.endTime = $scope.slider.maxValue;
-
-            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
-
-            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.getTables();
         }
       }
     };
@@ -366,11 +363,8 @@ angular.module('rezervoarApp')
     }
 
     $scope.$watch('dt', function() {
-
-        var dateTime = $scope.formatDateTime('dd.MM.yyyy');
-
         if ($scope.selectedLevel) {
-            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.getTables();
             $scope.getReservations();
         }
     });
@@ -380,18 +374,12 @@ angular.module('rezervoarApp')
         $scope.selectedLevel = $scope.levels[$scope.selectedLevelIndex];
         angular.element('#tables-div').scope().selectedLevel = $scope.selectedLevel;
 
-        $scope.startTime = $scope.slider.minValue;
-        $scope.endTime = $scope.slider.maxValue;
-
-        var dateTime = $scope.formatDateTime('dd.MM.yyyy');
-
-        $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+        $scope.getTables();
     };
 
     $scope.addReservation = function () {
         console.log("iz addReservation: currentUser: ", $scope.currentUser);
-        // $scope.res.loggedUser = $scope.currentUser;
-        $scope.res.loggedUser = 'mag';
+        $scope.res.loggedUser = $scope.currentUser;
         $scope.res.date = $scope.formatDateTime('d.M.yyyy');
         $scope.res.numberOfGuests = $scope.res.number_of_guests;
 
@@ -404,9 +392,7 @@ angular.module('rezervoarApp')
         ReservationFactory.addReservation($scope.res).then(function (response) {
             console.log("iz addReservation: data: ", JSON.stringify(response.data));
 
-            var dateTime = $scope.formatDateTime('dd.MM.yyyy');
-
-            $scope.getTables(dateTime, $scope.startTime, $scope.endTime, $scope.selectedLevel.label);
+            $scope.getTables();
             $scope.res = {};
             $scope.getReservations();
         }, function (response) {
@@ -447,7 +433,7 @@ angular.module('rezervoarApp')
         var tables = $scope.res.tables;
         $scope.res.tables = [];
         for (var i in tables) {
-            $scope.res.tables.push(tables[i].label);
+            $scope.res.tables.push(tables[i].text);
         }
 
         console.log("iz editReservation: scope.res: ", JSON.stringify($scope.res));
@@ -467,12 +453,13 @@ angular.module('rezervoarApp')
     };
 
     $scope.initialize = function() {
-        $scope.today();
+        if ($rootScope.loginSuccess === true) {
+            $scope.today();
 
-        $scope.getWorkingHours();
-        $scope.getReservations();
+            $scope.getWorkingHours();
+            $scope.getReservations();
+        }
     };
-
 
     $scope.initialize();
 

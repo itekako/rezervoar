@@ -74,9 +74,6 @@ angular
             .state('home.editreservation', {
                 url: '/editreservation/:id',
                 templateUrl: 'views/editreservation.html',
-                params: {
-                    reservation: null
-                },
                 data: {
                   authorizedRoles: [USER_ROLES.admin, USER_ROLES.waiter]
                 }

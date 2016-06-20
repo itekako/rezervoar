@@ -17,7 +17,6 @@ angular.module('rezervoarApp')
         password: ''
     };
 
-    $rootScope.loginSuccess = false;
     $scope.error = null;
 
     $scope.login = function () {
@@ -45,23 +44,20 @@ angular.module('rezervoarApp')
     };
 
     $scope.$on(AUTH_EVENTS.loginSuccess, function () {
-        console.log("IZ WATCHA SCOPE 0");
         $rootScope.loginSuccess = true;
         $scope.loginError = false;
     });
 
     $scope.$on(AUTH_EVENTS.notAuthenticated, function () {
-        console.log("IZ WATCHA SCOPE 1");
         $scope.error = 'The username or password are incorrect.';
         $scope.loginError = true;
         $rootScope.loginSuccess = false;
     });
 
     $scope.$on(AUTH_EVENTS.notAuthorized, function () {
-        console.log("IZ WATCHA SCOPE 2");
         $scope.error = 'You don\'t have permissions to access the requested page.';
         $scope.loginError = true;
-        $rootScope.false = true;
+        $rootScope.loginSuccess = false;
     });
 
 }]);
