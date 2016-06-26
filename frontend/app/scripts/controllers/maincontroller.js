@@ -43,6 +43,9 @@ angular.module('rezervoarApp')
     };
 
     $scope.formatDateTime = function (format) {
+        if (!$scope.dt) {
+            $scope.today();
+        }
         return $filter('date')($scope.dt, format);
     }
 
@@ -113,6 +116,16 @@ angular.module('rezervoarApp')
             function (response) {
                 console.log('reservation error response: ', JSON.stringify(response));
             });
+    };
+
+    $scope.initializeSlider = function (steps) {
+        $scope.slider.options.stepsArray = [];
+        for (var k in steps) {
+            $scope.slider.options.stepsArray[k] = {value: steps[k]};
+        }
+
+        $scope.slider.minValue = steps[9];
+        $scope.slider.maxValue = steps[13];
     };
 
     $scope.getWorkingHours = function () {
@@ -218,13 +231,7 @@ angular.module('rezervoarApp')
                 }
             }
 
-            $scope.slider.options.stepsArray = [];
-            for (var k in steps) {
-                $scope.slider.options.stepsArray[k] = {value: steps[k]};
-            }
-
-            $scope.slider.minValue = steps[9];
-            $scope.slider.maxValue = steps[13];
+            $scope.initializeSlider(steps);
 
             $scope.getTables();
 
@@ -376,7 +383,7 @@ angular.module('rezervoarApp')
         $scope.selectedLevel = $scope.levels[$scope.selectedLevelIndex];
         angular.element('#tables-div').scope().selectedLevel = $scope.selectedLevel;
 
-        $scope.getTables();
+        $scope.getWorkingHours();
     };
 
     $scope.addReservation = function () {
@@ -461,7 +468,7 @@ angular.module('rezervoarApp')
                 $scope.getReservations();
             }, function (response) {
                 console.log("cancelReservation error: response: ", JSON.stringify(response));
-            });            
+            });
         }
     };
 
